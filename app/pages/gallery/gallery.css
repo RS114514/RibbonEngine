@@ -1,0 +1,365 @@
+/* pages/gallery/gallery.css —— CG / BGM 鉴赏页，严格适配 800x220 */
+.gallery-root {
+  width: 800px;
+  height: 220px;
+  background-color: #0c070e;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.gallery-bg-img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 800px;
+  height: 220px;
+  opacity: 0.18;
+}
+
+.gallery-header {
+  width: 800px;
+  height: 38px;
+  background-color: rgba(22, 10, 24, 0.94);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 14px;
+  padding-right: 14px;
+  border-bottom-width: 1px;
+  border-bottom-color: rgba(214, 88, 114, 0.4);
+  z-index: 10;
+}
+
+.gallery-title-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.gallery-title {
+  font-size: 13px;
+  font-weight: bold;
+  color: #f7d6a5;
+  letter-spacing: 1px;
+}
+
+.gallery-subtitle {
+  font-size: 9px;
+  color: #bfa1b3;
+  margin-top: 1px;
+}
+
+.gallery-tabs {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.gallery-tab-item {
+  height: 26px;
+  padding-left: 12px;
+  padding-right: 12px;
+  background-color: #2b1320;
+  border-width: 1px;
+  border-color: #6a3449;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 6px;
+}
+
+.gallery-tab-active {
+  background-color: #b82647;
+  border-color: #f2cfa0;
+}
+
+.gallery-tab-text {
+  font-size: 11px;
+  font-weight: bold;
+  color: #eedce4;
+}
+
+.gallery-back-btn {
+  height: 26px;
+  padding-left: 10px;
+  padding-right: 10px;
+  background-color: #381525;
+  border-width: 1px;
+  border-color: #8c3b5a;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 12px;
+}
+
+.gallery-back-text {
+  font-size: 11px;
+  font-weight: bold;
+  color: #fbd6a5;
+}
+
+/* 横向滑动视口（类似日后谈） */
+.g-scroll-viewport {
+  width: 800px;
+  height: 182px;
+  position: relative;
+  overflow: hidden;
+}
+
+.g-scroll-list {
+  position: absolute;
+  top: 10px;
+  height: 162px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+/* CG 卡片（176×154：16:9 图片 176×99 + 信息条 55，间距 10） */
+.g-cg-card {
+  width: 176px;
+  height: 154px;
+  margin-left: 10px;
+  background-color: #140a16;
+  border-width: 1px;
+  border-color: #6a3449;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.g-cg-card-img {
+  width: 176px;
+  height: 99px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+.g-cg-card-bar {
+  width: 176px;
+  height: 55px;
+  background-color: #07040a;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-top-width: 2px;
+  border-top-color: #c22a4e;
+}
+
+.g-cg-card-code {
+  font-size: 13px;
+  font-weight: bold;
+  color: #ffe6b8;
+  letter-spacing: 0.5px;
+}
+
+.g-cg-card-role {
+  font-size: 10px;
+  font-weight: bold;
+  color: #ffffff;
+  background-color: #c22a4e;
+  border-radius: 3px;
+  padding: 2px 6px;
+}
+
+/* BGM 卡片 */
+.g-bgm-card {
+  width: 120px;
+  height: 150px;
+  margin-left: 10px;
+  background-color: #1e1122;
+  border-width: 1px;
+  border-color: #532438;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px 8px;
+}
+
+.g-bgm-card-active {
+  background-color: #381527;
+  border-color: #e57373;
+}
+
+.g-bgm-card-top {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.g-bgm-card-idx {
+  font-size: 10px;
+  color: #a08298;
+}
+
+.g-bgm-card-state {
+  font-size: 10px;
+  color: #8c6a84;
+}
+
+.g-bgm-card-state.active {
+  color: #81c784;
+  font-weight: bold;
+}
+
+.g-bgm-card-code {
+  font-size: 14px;
+  font-weight: bold;
+  color: #fce4be;
+  text-align: center;
+  margin-top: 14px;
+  margin-bottom: 14px;
+}
+
+.g-bgm-card-btn {
+  height: 26px;
+  background-color: #a82442;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.g-bgm-card-btn-text {
+  font-size: 11px;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+/* ================= 全屏大图模式 (双翼式布局：左侧翻页退出，右侧缩放重置) ================= */
+.gallery-fs-root {
+  width: 800px;
+  height: 220px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: #000000;
+  overflow: hidden;
+  z-index: 100;
+}
+
+/* 中间大图视口（宽 664px，高 220px） */
+.gallery-fs-viewport {
+  position: absolute;
+  left: 68px;
+  top: 0;
+  width: 664px;
+  height: 220px;
+  overflow: hidden;
+}
+
+.gallery-fs-img {
+  position: absolute;
+}
+
+/* 顶部信息条 */
+.gallery-fs-header {
+  position: absolute;
+  left: 10px;
+  top: 8px;
+  background-color: rgba(18, 9, 21, 0.85);
+  border-radius: 4px;
+  padding: 3px 8px;
+  border-width: 1px;
+  border-color: rgba(220, 110, 140, 0.35);
+  z-index: 110;
+}
+
+.gallery-fs-header-text {
+  font-size: 10px;
+  font-weight: bold;
+  color: #fae1c3;
+}
+
+/* 左翼控制栏 (宽 68px, 高 220px, 掌控翻页与退出) */
+.gallery-fs-left-wing {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 68px;
+  height: 220px;
+  background-color: rgba(16, 8, 14, 0.94);
+  border-right-width: 1px;
+  border-right-color: rgba(200, 80, 110, 0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  z-index: 120;
+}
+
+.gallery-fs-wing-btn {
+  width: 56px;
+  height: 38px;
+  background-color: #2b1322;
+  border-width: 1px;
+  border-color: #6a3449;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gallery-fs-wing-btn-exit {
+  width: 56px;
+  height: 38px;
+  background-color: #8c1d35;
+  border-width: 1px;
+  border-color: #e57373;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gallery-fs-wing-btn-text {
+  font-size: 11px;
+  font-weight: bold;
+  color: #f7e6e9;
+}
+
+/* 右翼控制栏 (宽 68px, 高 220px, 掌控放大、缩小与重置) */
+.gallery-fs-right-wing {
+  position: absolute;
+  left: 732px;
+  top: 0;
+  width: 68px;
+  height: 220px;
+  background-color: rgba(16, 8, 14, 0.94);
+  border-left-width: 1px;
+  border-left-color: rgba(200, 80, 110, 0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  z-index: 120;
+}
+
+.gallery-fs-wing-badge {
+  width: 56px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gallery-fs-wing-badge-text {
+  font-size: 12px;
+  font-weight: bold;
+  color: #ffca28;
+}

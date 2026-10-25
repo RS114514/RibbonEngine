@@ -1,0 +1,821 @@
+/* pages/title/title.css —— 主菜单 UI，尺寸严格 <= 800x220 */
+.title-root {
+  width: 800px;
+  height: 220px;
+  background-color: #12090e;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 800x220 标题背景（由用户资源提供） */
+.title-bg-img {
+  width: 800px;
+  height: 220px;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+/* 左侧文字菜单容器（两列并排） */
+.title-menu-container {
+  position: absolute;
+  left: 14px;
+  top: 76px;
+  width: 200px;
+  height: 138px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.title-menu-col {
+  width: 96px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 单个文字按钮条目 */
+.title-menu-btn {
+  width: 96px;
+  height: 29px;
+  margin-bottom: 5px;
+  background-color: rgba(24, 12, 18, 0.92);
+  border-width: 1px;
+  border-color: #6e4152;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.title-btn-primary {
+  background-color: #8c1d33;
+  border-color: #e5b982;
+}
+
+.title-btn-label {
+  font-size: 11px;
+  font-weight: bold;
+  color: #fff6eb;
+}
+
+.title-btn-sub {
+  font-size: 8px;
+  color: #cca474;
+}
+
+.title-btn-sub-highlight {
+  font-size: 8px;
+  color: #ffe8cb;
+}
+  width: 18px;
+  height: 138px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title-scroll-arrow {
+  width: 18px;
+  height: 18px;
+  background-color: rgba(30, 15, 22, 0.88);
+  border-width: 1px;
+  border-color: #6e4152;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title-scroll-arrow-text {
+  font-size: 9px;
+  color: #cca474;
+}
+
+.title-scroll-arrow-disabled {
+  opacity: 0.35;
+}
+
+.title-scroll-bar {
+  width: 3px;
+  height: 92px;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+  position: relative;
+}
+
+.title-scroll-thumb {
+  width: 3px;
+  background-color: #e5b982;
+  border-radius: 2px;
+  position: absolute;
+  left: 0;
+}
+
+/* 右上角简洁按键 */
+.title-top-bar {
+  position: absolute;
+  right: 14px;
+  top: 8px;
+  height: 26px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.title-bgm-pill {
+  height: 24px;
+  padding-left: 10px;
+  padding-right: 10px;
+  background-color: rgba(22, 11, 17, 0.82);
+  border-width: 1px;
+  border-color: #c99355;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.title-bgm-pill-text {
+  font-size: 11px;
+  color: #f7e6d0;
+}
+
+/* 存档/读档/流程弹窗浮层 */
+.title-modal-mask {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 800px;
+  height: 220px;
+  background-color: rgba(0, 0, 0, 0.78);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title-modal-box {
+  width: 580px;
+  height: 196px;
+  background-color: #1e1017;
+  border-width: 2px;
+  border-color: #d4a366;
+  border-radius: 6px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 16px;
+  padding-right: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.title-modal-header {
+  width: 546px;
+  height: 24px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom-width: 1px;
+  border-bottom-color: #4a2834;
+  padding-bottom: 4px;
+}
+
+.title-modal-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #fcecd7;
+}
+
+.title-modal-close {
+  height: 20px;
+  padding-left: 8px;
+  padding-right: 8px;
+  background-color: #7d1c31;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title-modal-close-text {
+  font-size: 11px;
+  color: #ffffff;
+}
+
+.title-slots-grid {
+  width: 546px;
+  height: 146px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.title-slot-card {
+  width: 546px;
+  height: 33px;
+  background-color: #2c1622;
+  border-width: 1px;
+  border-color: #6e4152;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+.title-slot-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.title-slot-num {
+  font-size: 12px;
+  font-weight: bold;
+  color: #df9e59;
+  margin-right: 12px;
+}
+
+.title-slot-desc {
+  font-size: 12px;
+  color: #eedcc9;
+}
+
+.title-slot-time {
+  font-size: 11px;
+  color: #9c6c7b;
+}
+
+/* 提示通知条 */
+.title-toast-box {
+  width: 546px;
+  height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title-toast-text {
+  font-size: 16px;
+  color: #eedcc9;
+}
+
+/* 流程图 FLOW CHART 全屏树状分支样式 */
+.flowchart-root {
+  width: 800px;
+  height: 220px;
+  background-color: #0d0711;
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 100;
+}
+
+.flowchart-header {
+  width: 800px;
+  height: 34px;
+  background-color: #1a0f1d;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 16px;
+  padding-right: 16px;
+  border-bottom-width: 1px;
+  border-bottom-color: #4a2436;
+}
+
+.flowchart-title-box {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.flowchart-title-text {
+  font-size: 14px;
+  font-weight: bold;
+  color: #f5d4a9;
+}
+
+.flowchart-subtitle {
+  font-size: 11px;
+  color: #a67c8b;
+  margin-left: 10px;
+}
+
+.flowchart-close-btn {
+  height: 24px;
+  padding-left: 10px;
+  padding-right: 10px;
+  background-color: #3b1828;
+  border-width: 1px;
+  border-color: #8c425c;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flowchart-close-text {
+  font-size: 11px;
+  font-weight: bold;
+  color: #fcedd8;
+}
+
+.flowchart-body {
+  width: 800px;
+  height: 186px;
+  display: flex;
+  flex-direction: row;
+  padding-left: 14px;
+  padding-right: 14px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  justify-content: space-between;
+}
+
+.flowchart-trunk-pane {
+  width: 366px;
+  height: 170px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.flowchart-trunk-row {
+  width: 366px;
+  height: 78px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flowchart-node {
+  width: 154px;
+  height: 74px;
+  background-color: #1b1020;
+  border-width: 1px;
+  border-color: #63334d;
+  border-radius: 5px;
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.flowchart-node-decision {
+  width: 154px;
+  height: 74px;
+  background-color: #2a111e;
+  border-width: 1px;
+  border-color: #b82647;
+  border-radius: 5px;
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.flowchart-node-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flowchart-node-tag {
+  font-size: 10px;
+  color: #df9e59;
+  font-weight: bold;
+}
+
+.flowchart-node-status {
+  font-size: 9px;
+  color: #64ad77;
+}
+
+.flowchart-node-title {
+  font-size: 12px;
+  font-weight: bold;
+  color: #fcedd8;
+}
+
+.flowchart-node-desc {
+  font-size: 10px;
+  color: #9d7d8e;
+}
+
+.flowchart-arrow {
+  width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flowchart-arrow-text {
+  font-size: 14px;
+  font-weight: bold;
+  color: #b82647;
+}
+
+.flowchart-branch-pane {
+  width: 390px;
+  height: 170px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.flowchart-branch-card {
+  width: 390px;
+  height: 38px;
+  background-color: #1b1020;
+  border-width: 1px;
+  border-color: #552d43;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.flowchart-branch-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.flowchart-branch-icon {
+  font-size: 13px;
+  margin-right: 6px;
+}
+
+.flowchart-branch-name {
+  font-size: 12px;
+  font-weight: bold;
+  color: #fad7a9;
+  margin-right: 8px;
+}
+
+.flowchart-branch-sub {
+  font-size: 10px;
+  color: #a47d91;
+}
+
+.flowchart-branch-end {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: #381525;
+  padding-left: 6px;
+  padding-right: 6px;
+  height: 22px;
+  border-radius: 3px;
+  border-width: 1px;
+  border-color: #893757;
+}
+
+.flowchart-branch-end-butterfly {
+  font-size: 12px;
+  margin-right: 4px;
+}
+
+.flowchart-branch-end-text {
+  font-size: 10px;
+  font-weight: bold;
+  color: #fde8d0;
+}
+
+/* 日后谈 AFTER STORY 全屏角色菜单样式 */
+.after-root {
+  width: 800px;
+  height: 220px;
+  background-color: #0d0711;
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 100;
+}
+
+.after-header {
+  width: 800px;
+  height: 34px;
+  background-color: #1a0f1d;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 16px;
+  padding-right: 16px;
+  border-bottom-width: 1px;
+  border-bottom-color: #4a2436;
+}
+
+.after-title-box {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.after-title-text {
+  font-size: 14px;
+  font-weight: bold;
+  color: #f5d4a9;
+}
+
+.after-subtitle {
+  font-size: 11px;
+  color: #a67c8b;
+  margin-left: 10px;
+}
+
+.after-close-btn {
+  height: 24px;
+  padding-left: 10px;
+  padding-right: 10px;
+  background-color: #3b1828;
+  border-width: 1px;
+  border-color: #8c425c;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.after-close-text {
+  font-size: 11px;
+  font-weight: bold;
+  color: #fcedd8;
+}
+
+.after-grid {
+  width: 800px;
+  height: 186px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding-left: 14px;
+  padding-right: 14px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  justify-content: space-between;
+  align-content: space-between;
+}
+
+.after-card {
+  width: 248px;
+  height: 80px;
+  background-color: #1a0e1e;
+  border-width: 1px;
+  border-color: #592d44;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 6px 10px;
+}
+
+.after-card-top {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.after-card-name-box {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.after-card-icon {
+  font-size: 13px;
+  margin-right: 6px;
+}
+
+.after-card-name {
+  font-size: 13px;
+  font-weight: bold;
+  color: #fad7a9;
+}
+
+.after-card-badge {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: #381525;
+  padding-left: 6px;
+  padding-right: 6px;
+  height: 18px;
+  border-radius: 3px;
+  border-width: 1px;
+  border-color: #8b3758;
+}
+
+.after-card-badge-butterfly {
+  font-size: 10px;
+  margin-right: 3px;
+}
+
+.after-card-badge-text {
+  font-size: 9px;
+  font-weight: bold;
+  color: #f9d8b7;
+}
+
+.after-card-title {
+  font-size: 11px;
+  font-weight: bold;
+  color: #eed0db;
+}
+
+.after-card-desc {
+  font-size: 10px;
+  color: #9d7b8e;
+}
+
+/* 系统设置与独立退出确认：800x220 和风触控弹层 */
+.title-system-mask {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 800px;
+  height: 220px;
+  background-color: rgba(8, 3, 8, 0.86);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.title-system-box {
+  width: 420px;
+  height: 182px;
+  padding: 10px 16px;
+  background-color: #1c0e19;
+  border-width: 2px;
+  border-color: #d4a366;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.title-system-header {
+  height: 32px;
+  border-bottom-width: 1px;
+  border-bottom-color: #6e4152;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title-system-title {
+  font-size: 15px;
+  font-weight: bold;
+  color: #f7d9ae;
+}
+
+.title-system-subtitle {
+  font-size: 11px;
+  color: #b894a3;
+}
+
+.title-system-content {
+  height: 88px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.title-system-row {
+  height: 40px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title-system-label {
+  font-size: 14px;
+  font-weight: bold;
+  color: #f4e4d3;
+}
+
+.title-system-btn {
+  min-width: 104px;
+  height: 36px;
+  padding-left: 12px;
+  padding-right: 12px;
+  background-color: #481a2c;
+  border-width: 1px;
+  border-color: #b06a68;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title-system-btn-text {
+  font-size: 13px;
+  font-weight: bold;
+  color: #fff1df;
+}
+
+.title-system-switch {
+  min-width: 128px;
+  background-color: #7d1c31;
+  border-color: #e0b477;
+}
+
+.title-system-volume {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.title-system-volume-btn {
+  min-width: 48px;
+  width: 48px;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.title-system-volume-text {
+  font-size: 20px;
+  font-weight: bold;
+  color: #ffe7c2;
+}
+
+.title-system-percent {
+  width: 76px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #f7d9ae;
+  text-align: center;
+}
+
+.title-system-footer {
+  height: 38px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.title-system-close {
+  min-width: 112px;
+}
+
+.title-exit-box {
+  height: 158px;
+}
+
+.title-exit-content {
+  height: 66px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.title-exit-message {
+  font-size: 15px;
+  font-weight: bold;
+  color: #f8e7d4;
+}
+
+.title-exit-warn {
+  font-size: 12px;
+  color: #d89b9f;
+  margin-top: 6px;
+}
+
+.title-exit-actions {
+  justify-content: space-between;
+}
+
+.title-system-confirm {
+  min-width: 128px;
+  background-color: #8c1d33;
+  border-color: #e5b982;
+}
+

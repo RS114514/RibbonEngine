@@ -1,0 +1,16 @@
+{
+  "pages": {
+    "title": "pages/title/title.js",
+    "game": "pages/game/game.js",
+    "gallery": "pages/gallery/gallery.js",
+    "flowchart": "pages/flowchart/flowchart.js",
+    "afterstory": "pages/afterstory/afterstory.js"
+  },
+  "options": {
+    "style": {
+      "lessPaths": [
+        "pages"
+      ]
+    }
+  }
+}

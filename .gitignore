@@ -1,0 +1,57 @@
+# macOS / editor noise
+.DS_Store
+._*
+.AppleDouble
+.vscode/
+.idea/
+*.swp
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Build outputs
+build/
+dist/
+*.amr
+*.js.bin
+
+# User-provided game data and assets (must never be committed)
+data_src/
+assets_src/
+assets/
+app/data/*.js
+app/data/.data_manifest.json
+
+# Any media / font / archive that could contain game resources
+*.ogg
+*.opus
+*.mp3
+*.wav
+*.flac
+*.m4a
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
+*.bmp
+*.tif
+*.tiff
+*.ttf
+*.otf
+*.woff
+*.woff2
+*.psb
+*.pimg
+*.tlg
+*.ks
+*.scn
+*.dat
+
+# Keep the original app icon and the prebuilt engine plugin
+!app/app_icon.png
+!native/prebuilt/libjsapi_gal.so
