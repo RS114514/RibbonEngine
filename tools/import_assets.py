@@ -185,6 +185,8 @@ def collect(source: Path, stage: Path, do_hash: bool, strict_size: bool):
 
 def copy_entries(entries, stage: Path):
     stage.mkdir(parents=True, exist_ok=True)
+    for sub in ("bg", "bg/ema", "fg", "bgm", "voice", "cg"):
+        (stage / sub).mkdir(parents=True, exist_ok=True)
     for entry in entries:
         src = Path(entry["source"])
         dest = stage / entry["stage"]
