@@ -536,8 +536,13 @@ export var gameMethods = {
     if (!voice) return;
     var G = getGal();
     if (G) {
+      if (this.currentBgm) {
+        G.stopBgm();
+        this.bgmSuspendedForVoice = true;
+      }
       G.stopVoice();
       G.playVoice(voicePath(voice), 1.0);
+      this.startVoiceWatcher();
     }
   },
 
