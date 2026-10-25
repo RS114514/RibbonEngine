@@ -132,6 +132,11 @@ export var gameMethods = {
     this._hStartScrollY = 0;
 
     this.clearAutoTimer();
+    // 进入游戏前释放标题/画廊可能仍占用的声卡，避免首句语音 Device busy。
+    var G = getGal();
+    if (G && typeof G.stopBgm === 'function') {
+      G.stopBgm();
+    }
     this.applyCurrentLine(true);
   },
 
