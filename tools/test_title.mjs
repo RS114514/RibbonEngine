@@ -291,7 +291,7 @@ test('loadSlotFromTitle restores saved scenario and leaves the flowchart opener 
   const invalid = makeVm();
   const invalidCalls = [];
   invalid.vm.initGame = (scenario, line) => { invalidCalls.push([scenario, line]); };
-  invalid.vm.titleSaves = { slot2: { line: 5, scenario: 'chapter_all' } };
+  invalid.vm.titleSaves = { slot2: { line: 5, scenario: 'legacy_scenario' } };
 
   invalid.vm.loadSlotFromTitle(2);
 
