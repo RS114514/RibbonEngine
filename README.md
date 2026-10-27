@@ -1,9 +1,22 @@
-# 通用词典笔 Galgame / 视觉小说纯净引擎 (gal-dictionary-pen-engine)
+# RibbonEngine (丝带引擎)
+
+> **The Ultrawide Visual Novel Engine for Embedded Devices**  
+> 专为嵌入式带鱼屏与有道词典笔量身打造的轻量级通用 Galgame / 视觉小说运行时容器。
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-RK3562%20%7C%20Linux%204.19-green.svg)](#)
 [![Display](https://img.shields.io/badge/Resolution-800x220%20Ultrawide-orange.svg)](#)
 [![Tests](https://img.shields.io/badge/Tests-Offline%20Suite%20PASS-brightgreen.svg)](#)
+
+---
+
+### 🎀 为什么命名为 RibbonEngine？
+
+1. **带鱼屏的形态美学**：设备 800×220 的物理显示比接近 4:1，极宽且极窄，如同一条舒展的宽幅**丝带（Ribbon）**。引擎将三栏布局与横卷画轴完美融合于这根“丝带”之中。
+2. **视觉小说的情感纽带**：在 Galgame 的意象中，丝带（Ribbon）既是经典的少女发饰，也是象征命运牵引与故事分支的纽带。
+3. **轻快与纯粹**：单 C 原生混音插件配合轻量微前端，追求如丝带般丝滑流畅的运行体验。
+
+---
 
 这是一个面向**网易有道词典笔（Rockchip RK3562 / Falcon + QuickJS 混合微前端）**的**通用纯净视觉小说（Galgame）运行时引擎**。
 本仓库定位为**通用底层引擎骨架与跨平台移植容器**，专供开发者移植任意商业或同人 GalGame 游戏。

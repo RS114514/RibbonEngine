@@ -27,7 +27,7 @@ class App extends $falcon.App {
   onDestroy() { super.onDestroy(); vlog('onDestroy'); }
 }
 App.meta = {
-  name: 'GAL Dictionary Pen Engine', version: '1.0.0', isSingleJsBundle: false,
+  name: 'RibbonEngine', version: '1.0.0', isSingleJsBundle: false,
   pages: {
     title: 'pages/title/title.vue',
     game: 'pages/game/game.vue',

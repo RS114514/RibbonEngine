@@ -30,7 +30,7 @@ PACKER = os.path.join(HERE, "tools", "pack_amr.py")
 NATIVE_SO = os.path.join(HERE, "native", "prebuilt", "libjsapi_gal.so")
 
 DEFAULT_APPID = "8002026102400099"
-DEFAULT_NAME = "GAL Dictionary Pen Engine"
+DEFAULT_NAME = "RibbonEngine"
 DEFAULT_VERSION = "1.0.0"
 PEN_LIB = os.environ.get("PEN_LIB", "/oem/YoudaoDictPen/output/libs:/usr/lib:/lib")
 DEFAULT_JSFMC = os.environ.get("PEN_JSFMC", "/userdisk/skip_re/tools/jsfmc")
