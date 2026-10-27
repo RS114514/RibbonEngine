@@ -4,7 +4,7 @@ import test from 'node:test';
 
 const MODULE_URL = new URL('../app/pages/title/title.js', import.meta.url);
 const CSS_URL = new URL('../app/pages/title/title.css', import.meta.url);
-const BGM_FILE = '/userdisk/SenrenBanka/bgm/BGM01.opus';
+const BGM_FILE = '/userdisk/gal_data/bgm/BGM01.opus';
 
 function dataUrl(source) {
   return 'data:text/javascript;base64,' + Buffer.from(source).toString('base64');
@@ -29,12 +29,12 @@ export var STORY = { meta: { titleBgm: 'BGM01' }, after: {}, afterMeta: [] };
 `;
 const mediaStub = `
 export function bgmPath(name) {
-  return '/userdisk/SenrenBanka/bgm/' + (name.indexOf('.') >= 0 ? name : name + '.opus');
+  return '/userdisk/gal_data/bgm/' + (name.indexOf('.') >= 0 ? name : name + '.opus');
 }
 export function bgUrl(name) {
-  return 'file:///userdisk/SenrenBanka/bg/' + name + (name.indexOf('.') >= 0 ? '' : '.png');
+  return 'file:///userdisk/gal_data/bg/' + name + (name.indexOf('.') >= 0 ? '' : '.png');
 }
-export function titleBgUrl() { return 'file:///userdisk/SenrenBanka/bg/title_bg.png'; }
+export function titleBgUrl() { return 'file:///userdisk/gal_data/bg/title_bg.png'; }
 export function isBlackBg(name) { return !name || name === '__black__' || name === '画面_黒'; }
 `;
 const source = await readFile(MODULE_URL, 'utf8');

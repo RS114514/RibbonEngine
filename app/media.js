@@ -1,8 +1,14 @@
 // media.js —— 词典笔本地资源路径解析
-// 所有资源都位于 /userdisk/SenrenBanka/ 下；本仓库不包含任何资源文件。
+// 默认所有资源位于 /userdisk/gal_data/ 下；支持自定义根目录。
 // 数据文件只保存“资源基名”或“相对路径”，扩展名与根路径在这里统一处理。
 
-export var ASSET_ROOT = '/userdisk/SenrenBanka';
+export var ASSET_ROOT = '/userdisk/gal_data';
+
+export function setAssetRoot(path) {
+  if (path && typeof path === 'string') {
+    ASSET_ROOT = path.replace(/\/+$/, '');
+  }
+}
 
 var IMAGE_EXTS = ['.png', '.jpg', '.jpeg', '.webp'];
 var VOICE_EXTS = ['.ogg', '.opus', '.wav'];
@@ -66,7 +72,19 @@ export function fgPath(name) {
   return assetPath('fg', name, '.png');
 }
 
-// 背景根目录下的相对路径，例如 title_bg、ema/ema_01.jpg
+export function sdPath(name) {
+  return assetPath('sd', name, '.png');
+}
+
+export function fxPath(name) {
+  return assetPath('fx', name, '.png');
+}
+
+export function sceneVariantPath(name) {
+  return assetPath('scene', name, '.png');
+}
+
+// 封面/绘马插图路径
 export function coverPath(name) {
   return assetPath('bg', name, '.jpg');
 }
@@ -96,6 +114,21 @@ export function fgUrl(name) {
   return path ? fileUrl(path) : '';
 }
 
+export function sdUrl(name) {
+  var path = sdPath(name);
+  return path ? fileUrl(path) : '';
+}
+
+export function fxUrl(name) {
+  var path = fxPath(name);
+  return path ? fileUrl(path) : '';
+}
+
+export function sceneVariantUrl(name) {
+  var path = sceneVariantPath(name);
+  return path ? fileUrl(path) : '';
+}
+
 export function coverUrl(name) {
   var path = coverPath(name);
   return path ? fileUrl(path) : '';
@@ -105,7 +138,7 @@ export function titleBgUrl() {
   return bgUrl('title_bg');
 }
 
-// 空值或黑屏标记不渲染背景；同时兼容旧数据的日文黑屏名。
+// 空值或黑屏标记不渲染背景
 export function isBlackBg(name) {
-  return !name || name === '__black__' || name === '画面_黒';
+  return !name || name === '__black__' || name === '画面_黒' || name === 'black';
 }

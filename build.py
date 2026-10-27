@@ -10,7 +10,7 @@
 5) 随附 native/prebuilt/libjsapi_gal.so 打包 .amr
 6) 可选 --install 安装到设备
 
-本仓库不包含任何游戏资源。资源放在设备的 /userdisk/SenrenBanka/ 下，
+本仓库不包含任何游戏资源。资源放在设备的 /userdisk/gal_data/ 下，
 不会被写进 .amr；.amr 只包含代码、图标和原生插件。
 """
 

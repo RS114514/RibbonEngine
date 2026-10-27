@@ -31,17 +31,17 @@ function withExt(name, ext) {
   var lower = String(name).toLowerCase();
   return lower.slice(-ext.length) === ext ? name : name + ext;
 }
-export function voicePath(name) { return '/userdisk/SenrenBanka/voice/' + withExt(name, '.ogg'); }
-export function bgmPath(name) { return '/userdisk/SenrenBanka/bgm/' + withExt(name, '.opus'); }
+export function voicePath(name) { return '/userdisk/gal_data/voice/' + withExt(name, '.ogg'); }
+export function bgmPath(name) { return '/userdisk/gal_data/bgm/' + withExt(name, '.opus'); }
 export function bgUrl(name) {
   if (!name) return '';
   var value = String(name);
-  return 'file:///userdisk/SenrenBanka/bg/' + (/\\.[a-z0-9]+$/i.test(value) ? value : value + '.png');
+  return 'file:///userdisk/gal_data/bg/' + (/\\.[a-z0-9]+$/i.test(value) ? value : value + '.png');
 }
-export function fgUrl(name) { return 'file:///userdisk/SenrenBanka/fg/' + withExt(name, '.png'); }
-export function cgUrl(name) { return 'file:///userdisk/SenrenBanka/cg/' + withExt(name, '.png'); }
-export function coverUrl(name) { return 'file:///userdisk/SenrenBanka/bg/' + name; }
-export function titleBgUrl() { return 'file:///userdisk/SenrenBanka/bg/title_bg.png'; }
+export function fgUrl(name) { return 'file:///userdisk/gal_data/fg/' + withExt(name, '.png'); }
+export function cgUrl(name) { return 'file:///userdisk/gal_data/cg/' + withExt(name, '.png'); }
+export function coverUrl(name) { return 'file:///userdisk/gal_data/bg/' + name; }
+export function titleBgUrl() { return 'file:///userdisk/gal_data/bg/title_bg.png'; }
 export function isBlackBg(name) { return !name || name === '__black__' || name === '画面_黒'; }
 `;
 

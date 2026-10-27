@@ -252,14 +252,16 @@ def check_refs(refs_path: Path, root: Path):
     ))
 
 
-def deploy_commands(stage: Path):
+def deploy_commands(stage: Path, target_dir: str = "/userdisk/gal_data"):
     commands = [
-        'adb -s "$PEN_SERIAL" shell "mkdir -p /userdisk/SenrenBanka/bg /userdisk/SenrenBanka/bg/ema /userdisk/SenrenBanka/fg /userdisk/SenrenBanka/bgm /userdisk/SenrenBanka/voice /userdisk/SenrenBanka/cg"',
-        'adb -s "$PEN_SERIAL" push "%s/." "/userdisk/SenrenBanka/bg/"' % (stage / "bg"),
-        'adb -s "$PEN_SERIAL" push "%s/." "/userdisk/SenrenBanka/fg/"' % (stage / "fg"),
-        'adb -s "$PEN_SERIAL" push "%s/." "/userdisk/SenrenBanka/bgm/"' % (stage / "bgm"),
-        'adb -s "$PEN_SERIAL" push "%s/." "/userdisk/SenrenBanka/voice/"' % (stage / "voice"),
-        'adb -s "$PEN_SERIAL" push "%s/." "/userdisk/SenrenBanka/cg/"' % (stage / "cg"),
+        'adb -s "$PEN_SERIAL" shell "mkdir -p %s/bg %s/fg %s/bgm %s/voice %s/cg %s/sd %s/fx"' % (
+            target_dir, target_dir, target_dir, target_dir, target_dir, target_dir, target_dir
+        ),
+        'adb -s "$PEN_SERIAL" push "%s/." "%s/bg/"' % (stage / "bg", target_dir),
+        'adb -s "$PEN_SERIAL" push "%s/." "%s/fg/"' % (stage / "fg", target_dir),
+        'adb -s "$PEN_SERIAL" push "%s/." "%s/bgm/"' % (stage / "bgm", target_dir),
+        'adb -s "$PEN_SERIAL" push "%s/." "%s/voice/"' % (stage / "voice", target_dir),
+        'adb -s "$PEN_SERIAL" push "%s/." "%s/cg/"' % (stage / "cg", target_dir),
     ]
     return commands
 
@@ -268,6 +270,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="校验并整理词典笔本地资源")
     parser.add_argument("--source", required=True, help="用户解包/转换后的资源目录")
     parser.add_argument("--stage", default="build/device_assets", help="整理后的输出目录")
+    parser.add_argument("--target-dir", default="/userdisk/gal_data", help="词典笔端目标根目录，默认 /userdisk/gal_data")
     parser.add_argument("--report", default=None, help="校验报告 JSON 路径")
     parser.add_argument("--refs", default=None, help="build_data.py 生成的 .data_manifest.json")
     parser.add_argument("--check", action="store_true", help="只校验，不复制")
@@ -286,14 +289,14 @@ def main() -> int:
         check_refs(Path(args.refs), root_for_refs)
 
     if args.print_adb:
-        for command in deploy_commands(stage):
+        for command in deploy_commands(stage, args.target_dir):
             print(command)
 
     if args.deploy_script:
         script = Path(args.deploy_script)
         script.parent.mkdir(parents=True, exist_ok=True)
         lines = ["#!/usr/bin/env bash", "set -euo pipefail", ': "${PEN_SERIAL:?set PEN_SERIAL first}"', ""]
-        lines.extend(deploy_commands(stage))
+        lines.extend(deploy_commands(stage, args.target_dir))
         with script.open("w", encoding="utf-8", newline="\n") as handle:
             handle.write("\n".join(lines) + "\n")
         script.chmod(0o755)

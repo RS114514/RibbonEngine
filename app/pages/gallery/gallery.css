@@ -1,4 +1,4 @@
-/* pages/gallery/gallery.css —— CG / BGM 鉴赏页，严格适配 800x220 */
+/* pages/gallery/gallery.css —— 柚子社和风多合一鉴赏收藏馆，严格适配 800x220 */
 .gallery-root {
   width: 800px;
   height: 220px;
@@ -362,4 +362,326 @@
   font-size: 12px;
   font-weight: bold;
   color: #ffca28;
+}
+
+/* ===== CG 女主选择与网格（101 张，不再平铺长列表） ===== */
+.g-group-viewport {
+  width: 800px;
+  height: 182px;
+  position: relative;
+  padding-top: 8px;
+}
+
+.g-group-hint {
+  font-size: 10px;
+  color: #bfa1b3;
+  margin-left: 14px;
+}
+
+.g-group-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-left: 14px;
+  padding-top: 8px;
+}
+
+.g-group-card {
+  width: 100px;
+  height: 112px;
+  margin-right: 6px;
+  background-color: #140a16;
+  border-width: 1px;
+  border-color: #6a3449;
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.g-group-img {
+  width: 100px;
+  height: 56px;
+}
+
+.g-group-info {
+  width: 100px;
+  height: 56px;
+  background-color: #07040a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.g-group-name {
+  font-size: 13px;
+  font-weight: bold;
+  color: #ffe6b8;
+}
+
+.g-group-count {
+  font-size: 10px;
+  color: #bfa1b3;
+  margin-top: 2px;
+}
+
+.g-cg-grid-viewport {
+  width: 800px;
+  height: 182px;
+  position: relative;
+}
+
+.g-cg-nav {
+  width: 800px;
+  height: 22px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.g-cg-nav-btn {
+  height: 18px;
+  padding-left: 8px;
+  padding-right: 8px;
+  background-color: #381525;
+  border-width: 1px;
+  border-color: #8c3b5a;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.g-cg-nav-text {
+  font-size: 10px;
+  font-weight: bold;
+  color: #fbd6a5;
+}
+
+.g-cg-nav-page {
+  font-size: 10px;
+  color: #e7c9a4;
+}
+
+.g-cg-grid {
+  width: 800px;
+  height: 158px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 2px;
+}
+
+.g-cg-tile {
+  width: 140px;
+  height: 74px;
+  margin-right: 4px;
+  margin-bottom: 4px;
+  background-color: #140a16;
+  border-width: 1px;
+  border-color: #6a3449;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.g-cg-tile-img {
+  width: 140px;
+  height: 74px;
+}
+
+.g-cg-tile-code {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 140px;
+  height: 14px;
+  background-color: rgba(7, 4, 10, 0.72);
+  font-size: 9px;
+  font-weight: bold;
+  color: #ffe6b8;
+  text-align: center;
+}
+
+/* 选中女主后的横向滑动 CG 列表（同日后谈交互） */
+.g-cg-group-pane {
+  width: 800px;
+  height: 182px;
+  position: relative;
+}
+
+.g-cg-group-viewport {
+  width: 800px;
+  height: 160px;
+  position: relative;
+  overflow: hidden;
+}
+
+.g-cg-group-list {
+  position: absolute;
+  top: 4px;
+  height: 154px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+/* ===== 立绘鉴赏：7 名角色、服装与表情差分 ===== */
+.g-stand-group-img {
+  width: 100px;
+  height: 56px;
+  background-color: #120a16;
+}
+
+.g-stand-pane {
+  width: 800px;
+  height: 182px;
+  display: flex;
+  flex-direction: row;
+}
+
+.g-stand-stage {
+  width: 390px;
+  height: 182px;
+  position: relative;
+  background-color: #0b0710;
+  border-right-width: 1px;
+  border-right-color: #6a3449;
+}
+
+.g-stand-img {
+  position: absolute;
+  left: 20px;
+  top: 0px;
+  width: 350px;
+  height: 182px;
+}
+
+.g-stand-controls {
+  width: 409px;
+  height: 182px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.g-stand-nav {
+  width: 389px;
+  height: 28px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.g-stand-back-btn {
+  width: 86px;
+  height: 26px;
+  background-color: #381525;
+  border-width: 1px;
+  border-color: #8c3b5a;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.g-stand-back-text {
+  font-size: 11px;
+  font-weight: bold;
+  color: #fbd6a5;
+}
+
+.g-stand-title {
+  width: 290px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #ffe6b8;
+  text-align: right;
+}
+
+.g-stand-dress-row {
+  width: 389px;
+  height: 80px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.g-stand-dress-btn {
+  width: 92px;
+  height: 34px;
+  margin-right: 6px;
+  margin-bottom: 6px;
+  background-color: #2b1320;
+  border-width: 1px;
+  border-color: #6a3449;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.g-stand-dress-btn-active {
+  background-color: #b82647;
+  border-color: #f2cfa0;
+}
+
+.g-stand-dress-text {
+  font-size: 11px;
+  font-weight: bold;
+  color: #eedce4;
+}
+
+.g-stand-face-row {
+  width: 389px;
+  height: 36px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.g-stand-face-btn {
+  width: 82px;
+  height: 32px;
+  background-color: #2b1320;
+  border-width: 1px;
+  border-color: #6a3449;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.g-stand-face-btn-text {
+  font-size: 11px;
+  font-weight: bold;
+  color: #f7e6e9;
+}
+
+.g-stand-face-text {
+  width: 160px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #ffca28;
+  text-align: center;
+}
+
+.g-stand-hint {
+  width: 389px;
+  height: 14px;
+  font-size: 9px;
+  color: #bfa1b3;
+  margin-top: 4px;
 }

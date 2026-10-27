@@ -38,21 +38,21 @@ const MAIN_ROWS = [
 
 const mediaStub = `
 export function voicePath(name) {
-  return '/userdisk/SenrenBanka/voice/' + (name.indexOf('.') >= 0 ? name : name + '.ogg');
+  return '/userdisk/gal_data/voice/' + (name.indexOf('.') >= 0 ? name : name + '.ogg');
 }
 export function bgmPath(name) {
-  return '/userdisk/SenrenBanka/bgm/' + (name.indexOf('.') >= 0 ? name : name + '.opus');
+  return '/userdisk/gal_data/bgm/' + (name.indexOf('.') >= 0 ? name : name + '.opus');
 }
 export function bgUrl(name) {
-  return name ? 'file:///userdisk/SenrenBanka/bg/' + name + (name.indexOf('.') >= 0 ? '' : '.png') : '';
+  return name ? 'file:///userdisk/gal_data/bg/' + name + (name.indexOf('.') >= 0 ? '' : '.png') : '';
 }
 export function fgUrl(name) {
-  return 'file:///userdisk/SenrenBanka/fg/' + name + (name.indexOf('.') >= 0 ? '' : '.png');
+  return 'file:///userdisk/gal_data/fg/' + name + (name.indexOf('.') >= 0 ? '' : '.png');
 }
 export function cgUrl(name) {
-  return 'file:///userdisk/SenrenBanka/cg/' + name + (name.indexOf('.') >= 0 ? '' : '.png');
+  return 'file:///userdisk/gal_data/cg/' + name + (name.indexOf('.') >= 0 ? '' : '.png');
 }
-export function titleBgUrl() { return 'file:///userdisk/SenrenBanka/bg/title_bg.png'; }
+export function titleBgUrl() { return 'file:///userdisk/gal_data/bg/title_bg.png'; }
 export function isBlackBg(name) { return !name || name === '__black__' || name === '画面_黒'; }
 `;
 
@@ -195,7 +195,7 @@ test('game BGM resumes after the switch is enabled and the game is re-entered', 
   vm.initGame('main', 0);
   assert.deepEqual(playCalls(calls)[0], {
     method: 'playBgm',
-    file: '/userdisk/SenrenBanka/bgm/bgm01.opus',
+    file: '/userdisk/gal_data/bgm/bgm01.opus',
     loop: true,
     volume: 0.4
   });
@@ -206,7 +206,7 @@ test('game BGM plays at the persisted volume and falls back to 0.8', () => {
   persisted.vm.initGame('main', 0);
   assert.deepEqual(playCalls(persisted.calls)[0], {
     method: 'playBgm',
-    file: '/userdisk/SenrenBanka/bgm/bgm01.opus',
+    file: '/userdisk/gal_data/bgm/bgm01.opus',
     loop: true,
     volume: 0.35
   });
@@ -232,7 +232,7 @@ test('ducking restore after a voice line reuses the persisted volume', () => {
   vm.applyCurrentLine(false);
   assert.deepEqual(playCalls(calls)[0], {
     method: 'playBgm',
-    file: '/userdisk/SenrenBanka/bgm/bgm01.opus',
+    file: '/userdisk/gal_data/bgm/bgm01.opus',
     loop: true,
     volume: 0.42
   });
@@ -270,7 +270,7 @@ test('voice watcher restore uses the persisted volume', () => {
 
   assert.deepEqual(playCalls(calls)[0], {
     method: 'playBgm',
-    file: '/userdisk/SenrenBanka/bgm/bgm01.opus',
+    file: '/userdisk/gal_data/bgm/bgm01.opus',
     loop: true,
     volume: 0.63
   });
@@ -337,7 +337,7 @@ test('gallery BGM honors the switch and persisted volume', () => {
   enabled.vm.playGalleryBgm(3);
   assert.deepEqual(playCalls(enabled.calls)[0], {
     method: 'playBgm',
-    file: '/userdisk/SenrenBanka/bgm/bgm03.opus',
+    file: '/userdisk/gal_data/bgm/bgm03.opus',
     loop: true,
     volume: 0.3
   });
@@ -366,7 +366,7 @@ test('gallery pause/resume reuses the persisted volume and respects the switch',
   enabled.vm.toggleGalleryBgmState();
   assert.deepEqual(playCalls(enabled.calls)[0], {
     method: 'playBgm',
-    file: '/userdisk/SenrenBanka/bgm/bgm01i.opus',
+    file: '/userdisk/gal_data/bgm/bgm01i.opus',
     loop: true,
     volume: 0.27
   });
