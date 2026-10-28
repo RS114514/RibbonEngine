@@ -17,7 +17,8 @@ import {
   pushBacklog,
   getBacklog,
   clearBacklog,
-  clearAllData
+  clearAllData,
+  resolveSlotThumbnail
 } from './storage.js';
 
 export {
@@ -36,7 +37,8 @@ export {
   pushBacklog,
   getBacklog,
   clearBacklog,
-  clearAllData
+  clearAllData,
+  resolveSlotThumbnail
 };
 
 // 章节名由数据行提供；缺失时返回可读占位，不再猜测游戏章节区间。

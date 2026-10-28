@@ -1,6 +1,6 @@
 // pages/title/title.js —— 主菜单与鉴赏/日后谈入口
 import { S, getGal, log } from '../../common.js';
-import { readAllSaves, readSettings, writeSettings, clearAllData } from '../../storage.js';
+import { readAllSaves, readSettings, writeSettings, clearAllData, resolveSlotThumbnail } from '../../storage.js';
 import { STORY } from '../../data/story_data.js';
 import { bgmPath, bgUrl, isBlackBg, titleBgUrl } from '../../media.js';
 
@@ -460,7 +460,7 @@ export function renderTitle(vm, h) {
 
       // 左侧选定槽位预览数据
       var selItem = tSaves['slot' + selSlot];
-      var selBg = selItem && !isBlackBg(selItem.bg) ? bgUrl(selItem.bg) : '';
+      var selBg = resolveSlotThumbnail(selItem);
       var selDate = selItem && selItem.time ? selItem.time : '——';
       var selChapter = selItem && selItem.chapter ? selItem.chapter : '——';
       var selComment = selItem ? (selItem.speaker ? '【' + selItem.speaker + '】' : '') + selItem.text : 'NO DATA';
@@ -473,7 +473,7 @@ export function renderTitle(vm, h) {
           var it = tSaves['slot' + slotNum];
           var codeStr = 's000' + (page + 1) + '-' + (slotNum < 10 ? '0' + slotNum : '' + slotNum);
           var timeStr = it && it.time ? it.time : '';
-          var bgPath = it && !isBlackBg(it.bg) ? bgUrl(it.bg) : '';
+          var bgPath = resolveSlotThumbnail(it);
           var descStr = it ? (it.speaker ? '【' + it.speaker + '】' : '') + it.text : 'NO DATA';
           var isCurrentSelected = selSlot === slotNum;
           var cardClass = 'saveload-slot-card';

@@ -106,6 +106,9 @@ export function saveSlotRecord(slotNum, state, gameId) {
     speaker: state.speaker || '',
     text: (state.text || '').substring(0, 48),
     bg: state.bg || '',
+    cg: state.cg || '',
+    sd: state.sd || '',
+    thumb: state.thumb || '',
     bgm: state.bgm || '',
     character: state.character || null,
     playTimeMs: Number(state.playTimeMs || 0),
@@ -115,6 +118,28 @@ export function saveSlotRecord(slotNum, state, gameId) {
   saves.latest = '' + slotNum;
   writeAllSaves(saves, gid);
   return record;
+}
+
+// 解析存档卡片缩略图（优先级：明确thumb > 事件CG > SD特殊演出 > 场景原画背景 > 默认壁纸）
+export function resolveSlotThumbnail(it, gameId) {
+  if (!it) return '';
+  var gid = gameId || _activeGameId;
+  var baseDir = '/userdisk/gal_data/' + gid + '/';
+
+  if (it.thumb) {
+    if (it.thumb.indexOf('file://') === 0) return it.thumb;
+    return 'file://' + it.thumb;
+  }
+  if (it.cg) {
+    return 'file://' + baseDir + 'cg/' + it.cg + '.png';
+  }
+  if (it.sd) {
+    return 'file://' + baseDir + 'sd/' + String(it.sd).toUpperCase() + '.png';
+  }
+  if (it.bg && it.bg !== '画面_黒') {
+    return 'file://' + baseDir + 'bg/' + it.bg + '.png';
+  }
+  return 'file://' + baseDir + 'bg/title_bg.png';
 }
 
 // 读取单槽记录
