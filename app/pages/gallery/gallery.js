@@ -69,9 +69,12 @@ function sceneGroupMaxPan(vm) {
 }
 
 var STAND_CHARS = GALLERY.standChars || GALLERY.stands || [];
+// 立绘鉴赏背景列表：优先从游戏配置 GALLERY.standBackgrounds 中读取
+// 重要规范：背景必须为不含人物的纯场景原画（Scene Background），严禁使用事件 CG 充当背景
 var STAND_BACKGROUNDS = GALLERY.standBackgrounds || [
   { name: '主界壁纸', file: 'title_bg' },
-  { name: '默认场景', file: 'shrine_day' },
+  { name: '默认场景', file: 'stage_bg_01' },
+  { name: '室内场景', file: 'room_bg_01' },
   { name: '纯黑背景', file: '' }
 ];
 

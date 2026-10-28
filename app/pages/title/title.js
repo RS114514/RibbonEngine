@@ -404,23 +404,20 @@ export function renderTitle(vm, h) {
                     h('text', { staticStyle: S('title-system-volume-text') }, '＋')
                   ])
                 ])
-              ]),
-              h('div', { staticStyle: S('title-system-row') }, [
-                h('text', { staticStyle: S('title-system-label') }, '游玩数据'),
-                h('div', {
-                  staticStyle: S('title-system-btn title-system-clear-btn'),
-                  on: { click: function () { vm.promptClearAllData(); } }
-                }, [
-                  h('text', { staticStyle: S('title-system-btn-text') }, '清除所有数据')
-                ])
               ])
             ]),
             h('div', { staticStyle: S('title-system-footer') }, [
               h('div', {
+                staticStyle: S('title-system-btn title-system-clear-btn'),
+                on: { click: function () { vm.promptClearAllData(); } }
+              }, [
+                h('text', { staticStyle: S('title-system-btn-text') }, '清除所有数据')
+              ]),
+              h('div', {
                 staticStyle: S('title-system-btn title-system-close'),
                 on: { click: function () { vm.closeTitleModal(); } }
               }, [
-                h('text', { staticStyle: S('title-system-btn-text') }, '返回标题')
+                h('text', { staticStyle: S('title-system-btn-text') }, '退出设置')
               ])
             ])
           ])
