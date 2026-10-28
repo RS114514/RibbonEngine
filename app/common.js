@@ -16,7 +16,8 @@ import {
   writeSettings,
   pushBacklog,
   getBacklog,
-  clearBacklog
+  clearBacklog,
+  clearAllData
 } from './storage.js';
 
 export {
@@ -34,7 +35,8 @@ export {
   writeSettings,
   pushBacklog,
   getBacklog,
-  clearBacklog
+  clearBacklog,
+  clearAllData
 };
 
 // 章节名由数据行提供；缺失时返回可读占位，不再猜测游戏章节区间。

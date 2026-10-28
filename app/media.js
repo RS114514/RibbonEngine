@@ -114,6 +114,15 @@ export function fgUrl(name) {
   return path ? fileUrl(path) : '';
 }
 
+export function standPath(name) {
+  return assetPath('stand', name, '.png');
+}
+
+export function standUrl(name) {
+  var path = standPath(name);
+  return path ? fileUrl(path) : '';
+}
+
 export function sdUrl(name) {
   var path = sdPath(name);
   return path ? fileUrl(path) : '';

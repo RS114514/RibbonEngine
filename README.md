@@ -39,14 +39,17 @@
 3. **原生软混音架构（`libjsapi_gal.so`）**：
    - 针对 RK3562 嵌入式单声卡（`/dev/snd/pcmC1D0p`）独占限制，自研了基于 GStreamer `appsrc`/`appsink` 的双声道 PCM 软件累加与饱和截断（saturation clipping）混音引擎，实现 BGM 与语音真正混音播放，彻底杜绝声卡被占死锁断流。
 4. **4-Tab 鉴赏系统（`app/pages/gallery/`）**：
-   - **CG 鉴赏**：多分组展示、解锁状态管理、全屏缩放。
-   - **场景回忆**：名场面片段快速回放。
-   - **立绘鉴赏**：角色服装、表情差分多维切换展示。
+   - **CG 鉴赏**：多分组展示、解锁状态管理、全屏等比缩放浏览。
+   - **场景回忆**：名场面片段快速回放、表情差分实时切换。
+   - **立绘鉴赏**：支持场景背景自由循环切换（告别纯黑死底）、全身立绘（`/userdisk/gal_data/<game_id>/stand/`）与半身胸像（`/userdisk/gal_data/<game_id>/fg/`）一键切换、点击立绘进入全屏大图特写，支持 1.0x ~ 2.2x 缩放与触控手势滑动平移。
    - **音乐盒**：BGM 列表播放、状态记忆、音量跟随。
 5. **FX 演出时间线与分支合流跳过栈**：
-   - 内置白闪、黑屏渐变、震屏等演出时间线调度器。
-   - 具备分支合流跳过栈（Branch Skip Stack），彻底解决分支剧情跳转与跨路线行号冲突问题。
-6. **精简过滤流程图（`app/pages/flowchart/`）**：
+   - 内置白闪、黑幕渐变、震屏等演出时间线调度器（原生支持十六进制底色配合 `opacity`，采用盒模型 `left`/`top` 位移解决 `transform` 兼容限制）。
+   - 具备分支合流跳过栈（Branch Skip Stack），彻底解决分支剧情跳转与跨路线行号冲突问题；跳转选项时主动重置目标选择记录，确保每次跳转都能重新触发选项弹出。
+6. **系统设置与数据安全管理（`app/pages/title/`）**：
+   - 支持 BGM 开关与精确音量调节（即时写入持久化存储）。
+   - 新增「清除所有数据」功能，具备红色高危二次确认防误触弹窗，可安全清空全部存档槽位、历史回顾队列与已解锁标记。
+7. **精简过滤流程图（`app/pages/flowchart/`）**：
    - 专为带鱼屏优化的决策树拓扑，精简展示章节起点与分支选择点，支持快速行号跳转。
 
 ---
@@ -61,13 +64,18 @@
 
 ### 2. 真实移植实战工程与深度复盘（必读）
 本引擎是从《千恋＊万花》词典笔完整移植项目中提炼而来的纯净核心。如果你想了解移植全流程、解包转码实战以及各种嵌入式硬件踩坑经验，请参考：
+- **本仓库实录归档**：[`AI-Record/` 目录](AI-Record/)
+  - [`AI-Record-Antigravity-FullPipeline-Engineering-and-Pitfalls.md`](AI-Record/AI-Record-Antigravity-FullPipeline-Engineering-and-Pitfalls.md)：全流程工程实践与深度避坑指南
+  - [`AI-Record-Antigravity-SenrenCore.md`](AI-Record/AI-Record-Antigravity-SenrenCore.md)：三栏布局与数据驱动引擎架构
+  - [`AI-Record-Qoder-Main-Porting-Testing.md`](AI-Record/AI-Record-Qoder-Main-Porting-Testing.md)：剧本解析与选择支跳转实录
+  - [`AI-Record-Antigravity-Playtester-Kanna.md`](AI-Record/AI-Record-Antigravity-Playtester-Kanna.md)：真机实测体验与触控调优
 - **实战移植工程仓库**：[senren-banka-ydpen-port](https://github.com/RS114514/senren-banka-ydpen-port)
-- **AI 移植与踩坑实录**：[AI-Record 目录](https://github.com/RS114514/senren-banka-ydpen-port/tree/main/AI-Record)
-  - 核心记录包含了：
-    - macOS AppleDouble `._*` 隐藏文件导致 4KB 文件损坏白屏的排查；
-    - ALSA 单声卡冲突与 GStreamer 软混音器的诞生史；
-    - 嵌套选择支与个人线行号冲突对账机制；
-    - 带鱼屏触控热区防误触调优。
+- **开发与踩坑记录**：
+  - macOS AppleDouble `._*` 隐藏文件导致 4KB 文件损坏白屏的排查；
+  - ALSA 单声卡冲突与 GStreamer 软混音器的诞生史；
+  - 嵌套选择支与个人线行号冲突对账机制；
+  - 动态样式透明度 `opacity` 与盒模型震屏位移实现；
+  - 带鱼屏触控热区防误触调优。
 
 ---
 
@@ -80,7 +88,8 @@
 /userdisk/gal_data/<game_id>/
 ├── bg/          # 背景图片（960×540 或 16:9 PNG/JPG）
 │   └── title_bg.png # 必需：主标题背景
-├── fg/          # 人物立绘（780×440 或 944×566 透明底 PNG）
+├── fg/          # 对话框半身胸像立绘（780×440 或 944×566 透明底 PNG）
+├── stand/       # 立绘鉴赏模式全身立绘（780×440 或 2:1 高清透明底 PNG，支持全屏大图特写）
 ├── cg/          # 事件 CG（PNG/JPG/WebP）
 ├── sd/          # SD Q版演出小图（PNG，居中 contain 渲染）
 ├── bgm/         # 背景音乐（OPUS 编码优先，或 48000Hz OGG）
@@ -97,15 +106,20 @@
 ```text
 .
 ├── AI_PORTING_PROMPT.md             # 面向 AI 的移植系统提示词（核心移植指南）
+├── AI-Record/                       # 核心架构与实战避坑复盘全记录
+│   ├── AI-Record-Antigravity-FullPipeline-Engineering-and-Pitfalls.md
+│   ├── AI-Record-Antigravity-SenrenCore.md
+│   ├── AI-Record-Qoder-Main-Porting-Testing.md
+│   └── AI-Record-Antigravity-Playtester-Kanna.md
 ├── app/
 │   ├── app.js / app.json / manifest.json
 │   ├── common.js / storage.js / media.js
 │   ├── root.js / base-page.js / page-entry.js
 │   ├── app_icon.png                 # 原创图标
 │   ├── pages/
-│   │   ├── title/                   # 主菜单
-│   │   ├── game/                    # 视觉小说主引擎
-│   │   ├── gallery/                 # 4-Tab 鉴赏（CG/场景/立绘/音乐盒）
+│   │   ├── title/                   # 主菜单与系统设置（支持清除数据）
+│   │   ├── game/                    # 视觉小说主引擎（三栏布局/FX/分支合流）
+│   │   ├── gallery/                 # 4-Tab 鉴赏（CG/场景/立绘全屏特写/音乐盒）
 │   │   ├── flowchart/               # 分支决策流程图
 │   │   └── afterstory/              # 后日谈/短篇剧本
 │   └── data/

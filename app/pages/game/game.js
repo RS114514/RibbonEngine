@@ -602,36 +602,46 @@ export var gameMethods = {
     this.clearAutoTimer();
     this.activeChoice = null;
     this.currentLine = line - 1;
+    var backChoice = findChoiceForLine(this.currentLine, this.currentScenario);
+    if (backChoice && this.choiceSelections) {
+      delete this.choiceSelections[backChoice.id];
+    }
     this.rebuildChoiceSkips();
     this.applyCurrentLine(false);
     return true;
   },
 
-  firstUnselectedChoiceLine: function (scenario, afterLine) {
+  nextChoiceLine: function (scenario, afterLine) {
     var key = scenario || 'main';
     var byLine = CHOICE_BY_SCENARIO[key] || {};
     var lines = Object.keys(byLine).map(Number).sort(function (a, b) { return a - b; });
     for (var i = 0; i < lines.length; i++) {
       var l = lines[i];
       if (l >= afterLine) {
-        var c = byLine[l];
-        if (!this.choiceSelections || this.choiceSelections[c.id] === undefined) {
-          return l;
-        }
+        return l;
       }
     }
     return null;
+  },
+
+  firstUnselectedChoiceLine: function (scenario, afterLine) {
+    return this.nextChoiceLine(scenario, afterLine);
   },
 
   jumpToNextChoice: function () {
     var scenario = this.currentScenario || 'main';
     var line = this.currentLine || 0;
     this.menuNotice = '';
-    var target = this.firstUnselectedChoiceLine(scenario, line + 1);
+    var target = this.nextChoiceLine(scenario, line + 1);
     if (target === null) {
       this.menuNotice = '后方暂无未决选项';
       return false;
     }
+    var targetChoice = findChoiceForLine(target, scenario);
+    if (targetChoice && this.choiceSelections) {
+      delete this.choiceSelections[targetChoice.id];
+    }
+    this.activeChoice = null;
     this.modalType = '';
     this.confirmModal = null;
     this.autoPlay = false;

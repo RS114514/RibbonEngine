@@ -218,3 +218,24 @@ export function getBacklog() {
 export function clearBacklog() {
   _backlogQueue = [];
 }
+
+// 清除所有游玩数据（重置所有存档槽、清空系统设置与已解锁记录、清空履历）
+export function clearAllData(gameId) {
+  var gid = gameId || _activeGameId;
+  _savesCache[gid] = {};
+  _settingsCache[gid] = Object.assign({}, DEFAULT_SETTINGS, { gameId: gid });
+  _backlogQueue = [];
+  var G = getGal();
+  if (G && typeof G.writeText === 'function') {
+    try {
+      G.writeText(getSaveFilePath(gid), '{}');
+      G.writeText('/userdisk/gal_data/' + gid + '_saves.json', '{}');
+      var defaultSettingsStr = JSON.stringify(_settingsCache[gid]);
+      G.writeText(getSettingsFilePath(gid), defaultSettingsStr);
+      G.writeText('/userdisk/gal_data/' + gid + '_settings.json', defaultSettingsStr);
+    } catch (e) {
+      log('clearAllData write error: ' + e);
+    }
+  }
+  return true;
+}

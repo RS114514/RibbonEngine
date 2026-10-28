@@ -249,6 +249,14 @@
   z-index: 100;
 }
 
+.gallery-fs-bg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 800px;
+  height: 220px;
+}
+
 /* 中间大图视口（宽 664px，高 220px） */
 .gallery-fs-viewport {
   position: absolute;
@@ -553,6 +561,15 @@
   background-color: #0b0710;
   border-right-width: 1px;
   border-right-color: #6a3449;
+  overflow: hidden;
+}
+
+.g-stand-stage-bg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 390px;
+  height: 182px;
 }
 
 .g-stand-img {
@@ -563,19 +580,41 @@
   height: 182px;
 }
 
+.g-stand-zoom-badge {
+  position: absolute;
+  left: 6px;
+  bottom: 6px;
+  height: 18px;
+  padding-left: 6px;
+  padding-right: 6px;
+  background-color: #1a0b16;
+  border-width: 1px;
+  border-color: #8c3b5a;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.g-stand-zoom-badge-text {
+  font-size: 9px;
+  font-weight: bold;
+  color: #fbd6a5;
+}
+
 .g-stand-controls {
   width: 409px;
   height: 182px;
   padding-left: 10px;
   padding-right: 10px;
-  padding-top: 8px;
+  padding-top: 6px;
   display: flex;
   flex-direction: column;
 }
 
 .g-stand-nav {
   width: 389px;
-  height: 28px;
+  height: 26px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -584,7 +623,7 @@
 
 .g-stand-back-btn {
   width: 86px;
-  height: 26px;
+  height: 24px;
   background-color: #381525;
   border-width: 1px;
   border-color: #8c3b5a;
@@ -602,7 +641,7 @@
 
 .g-stand-title {
   width: 290px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: bold;
   color: #ffe6b8;
   text-align: right;
@@ -610,18 +649,18 @@
 
 .g-stand-dress-row {
   width: 389px;
-  height: 80px;
+  height: 48px;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  margin-top: 6px;
+  margin-top: 4px;
 }
 
 .g-stand-dress-btn {
-  width: 92px;
-  height: 34px;
-  margin-right: 6px;
-  margin-bottom: 6px;
+  width: 90px;
+  height: 22px;
+  margin-right: 5px;
+  margin-bottom: 4px;
   background-color: #2b1320;
   border-width: 1px;
   border-color: #6a3449;
@@ -637,24 +676,24 @@
 }
 
 .g-stand-dress-text {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: bold;
   color: #eedce4;
 }
 
 .g-stand-face-row {
   width: 389px;
-  height: 36px;
+  height: 28px;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  margin-top: 4px;
+  margin-top: 3px;
 }
 
 .g-stand-face-btn {
-  width: 82px;
-  height: 32px;
+  width: 76px;
+  height: 24px;
   background-color: #2b1320;
   border-width: 1px;
   border-color: #6a3449;
@@ -665,23 +704,63 @@
 }
 
 .g-stand-face-btn-text {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: bold;
   color: #f7e6e9;
 }
 
 .g-stand-face-text {
-  width: 160px;
-  font-size: 12px;
+  width: 140px;
+  font-size: 11px;
   font-weight: bold;
   color: #ffca28;
   text-align: center;
 }
 
+.g-stand-extra-row {
+  width: 389px;
+  height: 28px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.g-stand-ctrl-btn {
+  height: 24px;
+  padding-left: 8px;
+  padding-right: 8px;
+  background-color: #2b1320;
+  border-width: 1px;
+  border-color: #6a3449;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.g-stand-ctrl-btn-zoom {
+  background-color: #8c2642;
+  border-color: #f2cfa0;
+}
+
+.g-stand-ctrl-text {
+  font-size: 10px;
+  font-weight: bold;
+  color: #eedce4;
+}
+
+.g-stand-ctrl-zoom-text {
+  font-size: 10px;
+  font-weight: bold;
+  color: #ffe6b8;
+}
+
 .g-stand-hint {
   width: 389px;
-  height: 14px;
+  height: 13px;
   font-size: 9px;
   color: #bfa1b3;
-  margin-top: 4px;
+  margin-top: 3px;
 }

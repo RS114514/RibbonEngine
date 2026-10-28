@@ -1,6 +1,6 @@
 // pages/title/title.js —— 主菜单与鉴赏/日后谈入口
 import { S, getGal, log } from '../../common.js';
-import { readAllSaves, readSettings, writeSettings } from '../../storage.js';
+import { readAllSaves, readSettings, writeSettings, clearAllData } from '../../storage.js';
 import { STORY } from '../../data/story_data.js';
 import { bgmPath, bgUrl, isBlackBg, titleBgUrl } from '../../media.js';
 
@@ -124,6 +124,26 @@ export var titleMethods = {
   cancelTitleConfirm: function () {
     this.titleConfirmModal = null;
     this._confirmExecuting = false;
+  },
+  promptClearAllData: function () {
+    this.titleConfirmModal = {
+      isClearData: true,
+      title: '清除全部数据',
+      subtitle: 'CLEAR ALL DATA',
+      message: '确定要清除所有存档与游玩数据吗？\n所有存档、历史回顾与已解锁内容将被全部删除！',
+      warn: '⚠️ 此操作不可撤销，请谨慎操作'
+    };
+  },
+  confirmClearAllData: function () {
+    clearAllData();
+    this.titleConfirmModal = null;
+    this.titleSaves = {};
+    this.choiceSelections = {};
+    this.choiceFlags = {};
+    this.currentLine = 0;
+    this.currentScenario = 'main';
+    this.initTitle();
+    this.closeTitleModal();
   },
   openFlowchartModal: function () {
     this.titleModalType = '';
@@ -384,6 +404,15 @@ export function renderTitle(vm, h) {
                     h('text', { staticStyle: S('title-system-volume-text') }, '＋')
                   ])
                 ])
+              ]),
+              h('div', { staticStyle: S('title-system-row') }, [
+                h('text', { staticStyle: S('title-system-label') }, '游玩数据'),
+                h('div', {
+                  staticStyle: S('title-system-btn title-system-clear-btn'),
+                  on: { click: function () { vm.promptClearAllData(); } }
+                }, [
+                  h('text', { staticStyle: S('title-system-btn-text') }, '清除所有数据')
+                ])
               ])
             ]),
             h('div', { staticStyle: S('title-system-footer') }, [
@@ -584,7 +613,20 @@ export function renderTitle(vm, h) {
             vm.titleConfirmModal.warn ? h('text', { staticStyle: S('confirm-sub-warn') }, vm.titleConfirmModal.warn) : null
           ]),
           // 底部双按钮操作区
-          h('div', { staticStyle: S('confirm-actions') }, [
+          h('div', { staticStyle: S('confirm-actions') }, vm.titleConfirmModal.isClearData ? [
+            h('div', {
+              staticStyle: S('confirm-btn confirm-btn-ok confirm-btn-danger'),
+              on: { click: function () { vm.confirmClearAllData(); } }
+            }, [
+              h('text', { staticStyle: S('confirm-btn-ok-text') }, '确定清除')
+            ]),
+            h('div', {
+              staticStyle: S('confirm-btn confirm-btn-cancel'),
+              on: { click: function () { vm.cancelTitleConfirm(); } }
+            }, [
+              h('text', { staticStyle: S('confirm-btn-cancel-text') }, '取消')
+            ])
+          ] : [
             h('div', {
               staticStyle: S('confirm-btn confirm-btn-ok'),
               on: { click: function () { vm.confirmExecuteTitleLoad(); } }

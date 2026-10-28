@@ -161,11 +161,17 @@ export var GALLERY = {
      - `.game-textbox`：修改文本框背景底色、半透明度、圆角和外边框
      - `.game-speaker-tag`：修改姓名标签的配色与阴影
      - `.game-action-btn`：修改侧边栏按钮样式
-   - 标题主菜单：`app/pages/title/title.css`
+     - `.game-fx-black`, `.game-fx-white`, `.game-fx-overlay`：黑幕/白闪淡入淡出及特效层样式（使用十六进制色值配合 `opacity`，避免使用原生解析不良的 `rgba()`）
+   - 标题主菜单与系统设置：`app/pages/title/title.css`
      - `.title-root`：标题画面的背景图（默认引用 `/userdisk/gal_data/<game_id>/bg/title_bg.png`）
      - `.title-menu-item`：标题菜单按钮的字体、悬浮与点击效果
+     - `.title-system-clear-btn`：清除游玩数据按钮样式
+     - `.confirm-btn-danger`：危险操作二次确认高亮红按钮
    - 鉴赏页面：`app/pages/gallery/gallery.css`
      - 4 Tab 切换标签样式与网格列表排列
+     - `.g-stand-stage`：立绘鉴赏舞台（底层渲染场景背景图，上方渲染立绘人物，支持点击进入全屏放大）
+     - `.g-stand-ctrl-btn`：立绘背景循环切换、全身/半身模式切换、全屏放大特写按钮
+     - `.gallery-fs-root`：全屏大图交互视图，双翼式控制栏，支持 1.0x~2.2x 缩放与触控手势滑动平移
 
 2. **尺寸防爆铁则**：
    - 根容器高度必须严格限制在 `height: 220px; width: 800px;`。
@@ -177,12 +183,15 @@ export var GALLERY = {
 ### 五、必读踩坑总结（参考《千恋＊万花》移植实战）
 
 在开发移植转换流水线前，请先阅读前人移植《千恋＊万花》沉淀下来的深度复盘与架构实战记录：
-- 完整开发与踩坑记录文档：https://github.com/RS114514/senren-banka-ydpen-port/tree/main/AI-Record
+- 本仓库 AI 避坑记录：[`AI-Record/AI-Record-Antigravity-FullPipeline-Engineering-and-Pitfalls.md`](AI-Record/AI-Record-Antigravity-FullPipeline-Engineering-and-Pitfalls.md)
+- 《千恋＊万花》实战全记录：https://github.com/RS114514/senren-banka-ydpen-port/tree/main/AI-Record
 
 核心教训提炼：
 1. **macOS AppleDouble 文件污染**：在 macOS 下处理资源推送到词典笔时，系统会自动生成 `._filename.png` 等 4KB 隐藏文件。GStreamer 和图片加载器若读到 `._*` 会发生崩溃或白屏。部署前必须执行 `find . -name "._*" -delete`！
-2. **分支合流跳过栈（Branch Skip Stack）**：当剧情出现嵌套选择支或不同分支跳回共通线时，必须维护跳过栈，防止不同路线重合行号误触选择支。
-3. **离线单测守护**：移植过程中务必多利用 Node 离线测试套件（如 `tools/test_*.mjs`）验证语法、响应式状态与数据驱动渲染，确保无语法报错后再向设备部署。
+2. **分支合流跳过栈（Branch Skip Stack）**：当剧情出现嵌套选择支或不同分支跳回共通线时，必须维护跳过栈，防止不同路线重合行号误触选择支。跳转到下一选项时，需主动重置目标选项的历史选择记录，确保每次跳转都能停在该选项弹出分支。
+3. **样式与特效限制**：动态转场透明度使用 `#000000` / `#ffffff` + `opacity`（不可用 `rgba(r,g,b,a)`）；震屏位移使用 `left`/`top`（不可用普通 `transform: translate`）。
+4. **立绘全身与半身**：对话框舞台立绘需截取半身胸像（780×440，适配 390×220 舞台），而立绘鉴赏模式可提供完整全身立绘与场景背景衬托，并支持全屏特写手势拖动。
+5. **离线单测守护**：移植过程中务必多利用 Node 离线测试套件（如 `tools/test_*.mjs`）验证语法、响应式状态与数据驱动渲染，确保无语法报错后再向设备部署。
 
 请现在回复我，确认你已完全掌握上述规范，并告诉我你需要我提供目标游戏的哪些原始信息（解包格式、引擎类型、文件列表等），以便我们开始第一阶段的移植工作！
 ````
@@ -191,6 +200,6 @@ export var GALLERY = {
 
 ## 开发者快速指引
 
-- **通用纯净引擎仓库**：[RibbonEngine](https://github.com/RS114514/RibbonEngine)
+- **通用纯净引擎仓库**：[RibbonEngine (丝带引擎)](https://github.com/RS114514/RibbonEngine)
+- **开发与避坑实录归档**：[`AI-Record/` 目录](AI-Record/)
 - **移植参考实战工程（《千恋＊万花》）**：[senren-banka-ydpen-port](https://github.com/RS114514/senren-banka-ydpen-port)
-- **开发与踩坑实录**：[AI-Record 目录](https://github.com/RS114514/senren-banka-ydpen-port/tree/main/AI-Record)

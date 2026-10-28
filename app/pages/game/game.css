@@ -1253,3 +1253,33 @@
   color: #ffffff;
 }
 
+/* FX 转场与特效遮罩层 */
+.game-fx-black {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 800px;
+  height: 220px;
+  background-color: #000000;
+  z-index: 50;
+}
+
+.game-fx-white {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 800px;
+  height: 220px;
+  background-color: #ffffff;
+  z-index: 50;
+}
+
+.game-fx-overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 390px;
+  height: 220px;
+  z-index: 30;
+}
+

@@ -667,8 +667,8 @@
 
 .title-system-box {
   width: 420px;
-  height: 182px;
-  padding: 10px 16px;
+  height: 200px;
+  padding: 8px 16px;
   background-color: #1c0e19;
   border-width: 2px;
   border-color: #d4a366;
@@ -679,7 +679,7 @@
 }
 
 .title-system-header {
-  height: 32px;
+  height: 28px;
   border-bottom-width: 1px;
   border-bottom-color: #6e4152;
   display: flex;
@@ -689,25 +689,25 @@
 }
 
 .title-system-title {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: bold;
   color: #f7d9ae;
 }
 
 .title-system-subtitle {
-  font-size: 11px;
+  font-size: 10px;
   color: #b894a3;
 }
 
 .title-system-content {
-  height: 88px;
+  height: 116px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
 .title-system-row {
-  height: 40px;
+  height: 34px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -715,14 +715,14 @@
 }
 
 .title-system-label {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: bold;
   color: #f4e4d3;
 }
 
 .title-system-btn {
   min-width: 104px;
-  height: 36px;
+  height: 30px;
   padding-left: 12px;
   padding-right: 12px;
   background-color: #481a2c;
@@ -732,6 +732,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.title-system-clear-btn {
+  background-color: #7a1f28;
+  border-color: #d84a56;
+}
+
+.confirm-btn-danger {
+  background-color: #9c1b26;
+  border-color: #ff5252;
 }
 
 .title-system-btn-text {
