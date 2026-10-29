@@ -1155,98 +1155,145 @@
   color: #ffffff;
 }
 
-/* 对话选择支 */
+/* 对话选择支（720x196 绝对定位双栏布局，防误触两步确认） */
 .game-choice-mask {
   position: absolute;
-  top: 0;
   left: 0;
+  top: 0;
   width: 800px;
   height: 220px;
-  background-color: rgba(5, 7, 12, 0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background-color: rgba(6, 3, 10, 0.90);
   z-index: 300;
 }
-
 .game-choice-panel {
-  width: 480px;
+  position: absolute;
+  left: 40px;
+  top: 12px;
+  width: 720px;
   height: 196px;
-  background-color: rgba(24, 17, 28, 0.98);
-  border-width: 2px;
-  border-color: #d9ad74;
+  background-color: #241128;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #d69bbd;
   border-radius: 6px;
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
+  overflow: hidden;
 }
-
 .game-choice-header {
-  width: 460px;
-  height: 18px;
+  position: absolute;
+  left: 14px;
+  top: 6px;
+  width: 692px;
+  height: 22px;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
 }
-
 .game-choice-title {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: bold;
   color: #ffe0ad;
 }
-
 .game-choice-notice {
-  font-size: 9px;
-  color: #bfa7b8;
+  font-size: 11px;
+  color: #ddbbd2;
 }
-
-.game-choice-prompt {
-  width: 460px;
-  height: 38px;
-  font-size: 12px;
-  line-height: 17px;
-  color: #f7e9dd;
+.game-choice-body {
+  position: absolute;
+  left: 14px;
+  top: 30px;
+  width: 692px;
+  height: 160px;
 }
-
 .game-choice-options {
-  width: 460px;
-  height: 117px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 520px;
+  height: 160px;
   display: flex;
   flex-direction: column;
+  justify-content: space-around;
 }
-
 .game-choice-option {
-  width: 460px;
-  height: 34px;
-  margin-bottom: 5px;
-  background-color: #3b1b2b;
+  width: 520px;
+  height: 32px;
+  background-color: #421c38;
   border-width: 1px;
-  border-color: #b65b76;
+  border-style: solid;
+  border-color: #8c537a;
   border-radius: 4px;
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding-left: 12px;
 }
-
-.game-choice-option-disabled {
-  opacity: 0.42;
-  border-color: #5a4a52;
+.game-choice-option-selected {
+  background-color: #78265b;
+  border-width: 2px;
+  border-style: solid;
+  border-color: #ffd54f;
 }
-
 .game-choice-option-index {
-  width: 24px;
+  width: 34px;
   font-size: 12px;
-  font-weight: bold;
-  color: #ffd27f;
+  text-align: center;
+  color: #ffd8a4;
 }
-
+.game-choice-option-index-selected {
+  color: #ffd54f;
+  font-weight: bold;
+}
 .game-choice-option-text {
-  width: 420px;
+  width: 476px;
   font-size: 13px;
+  line-height: 15px;
+  color: #fdf2f7;
+}
+.game-choice-option-text-selected {
+  color: #ffffff;
+  font-weight: bold;
+}
+.game-choice-side {
+  position: absolute;
+  left: 532px;
+  top: 0;
+  width: 156px;
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.game-choice-confirm-btn {
+  width: 144px;
+  height: 84px;
+  background-color: #381e37;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #684164;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.5;
+}
+.game-choice-confirm-btn-active {
+  background-color: #8c2459;
+  border-width: 2px;
+  border-style: solid;
+  border-color: #ffd54f;
+  opacity: 1.0;
+}
+.game-choice-confirm-title {
+  font-size: 14px;
   font-weight: bold;
   color: #ffffff;
+  text-align: center;
+}
+.game-choice-confirm-sub {
+  font-size: 10px;
+  color: #ffd54f;
+  text-align: center;
 }
 
 /* 舞台专属转场 / 闪光 / 特效图层（390px x 220px，不遮挡台词框与操作栏） */

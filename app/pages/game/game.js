@@ -666,6 +666,19 @@ export var gameMethods = {
     }
   },
 
+  highlightChoiceOption: function (option) {
+    if (!option) return;
+    this.selectedChoiceIndex = option.index;
+  },
+
+  confirmChoiceOption: function () {
+    if (!this.activeChoice || !this.activeChoice.options) return;
+    var idx = this.selectedChoiceIndex;
+    var opt = this.activeChoice.options.find(function (o) { return o.index === idx; });
+    if (!opt) return;
+    this.handleChoiceSelect(this.activeChoice, opt);
+  },
+
   handleChoiceSelect: function (choice, option) {
     if (!choice || !option) return;
     var targetLine = resolveChoiceOptionLine(option);
@@ -1237,23 +1250,43 @@ export function renderGame(vm, h) {
     ]));
   }
 
-  // 分支选择弹层
+  // 分支选择弹层（双栏布局：左侧选项，右侧确认按钮）
   if (vm.activeChoice && vm.activeChoice.options) {
+    var selectedIdx = vm.selectedChoiceIndex !== undefined ? vm.selectedChoiceIndex : -1;
     var optionButtons = vm.activeChoice.options.map(function (opt) {
+      var isSel = opt.index === selectedIdx;
       return h('div', {
         key: opt.index,
-        staticStyle: S('game-choice-option'),
-        on: { click: function () { vm.handleChoiceSelect(vm.activeChoice, opt); } }
+        staticStyle: S(isSel ? 'game-choice-option game-choice-option-selected' : 'game-choice-option'),
+        on: { click: function () { vm.highlightChoiceOption(opt); } }
       }, [
-        h('text', { staticStyle: S('game-choice-option-text') }, opt.text)
+        h('text', { staticStyle: S(isSel ? 'game-choice-option-index game-choice-option-index-selected' : 'game-choice-option-index') }, (opt.index || 1) + '.'),
+        h('text', { staticStyle: S(isSel ? 'game-choice-option-text game-choice-option-text-selected' : 'game-choice-option-text') }, opt.text)
       ]);
     });
-    rootChildren.push(h('div', { staticStyle: S('game-modal-mask') }, [
-      h('div', { staticStyle: S('game-choice-panel') }, [
-        h('text', { staticStyle: S('game-choice-prompt') }, vm.choiceNotice || '请选择分支'),
-        h('div', { staticStyle: S('game-choice-options') }, optionButtons)
+    var hasValidSelection = selectedIdx > 0;
+    rootChildren.push(
+      h('div', { staticStyle: S('game-choice-mask') }, [
+        h('div', { staticStyle: S('game-choice-panel') }, [
+          h('div', { staticStyle: S('game-choice-header') }, [
+            h('text', { staticStyle: S('game-choice-title') }, '请选择行动（点选后点击右侧确定）'),
+            h('text', { staticStyle: S('game-choice-notice') }, '面对此刻，你的心意是……')
+          ]),
+          h('div', { staticStyle: S('game-choice-body') }, [
+            h('div', { staticStyle: S('game-choice-options') }, optionButtons),
+            h('div', { staticStyle: S('game-choice-side') }, [
+              h('div', {
+                staticStyle: S(hasValidSelection ? 'game-choice-confirm-btn game-choice-confirm-btn-active' : 'game-choice-confirm-btn'),
+                on: { click: function () { vm.confirmChoiceOption(); } }
+              }, [
+                h('text', { staticStyle: S('game-choice-confirm-title') }, '确定选择'),
+                h('text', { staticStyle: S('game-choice-confirm-sub') }, 'CONFIRM')
+              ])
+            ])
+          ])
+        ])
       ])
-    ]));
+    );
   }
 
   // 结局展示弹层

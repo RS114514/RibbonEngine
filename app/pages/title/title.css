@@ -825,3 +825,44 @@
   border-color: #e5b982;
 }
 
+/* 存档/读档弹层样式（严格等比 16:9 居中，防拉伸压扁） */
+.saveload-root { position: absolute; left: 0; top: 0; width: 800px; height: 220px; background-color: #160b1a; overflow: hidden; z-index: 220; }
+.saveload-header { position: absolute; left: 10px; top: 3px; width: 780px; height: 28px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; }
+.saveload-title-box, .saveload-header-right, .saveload-mode-tabs, .saveload-pager { display: flex; flex-direction: row; align-items: center; }
+.saveload-title-cloud { font-size: 13px; color: #edc596; margin-right: 6px; }
+.saveload-title-text { font-size: 13px; font-weight: bold; color: #fce6ed; }
+.saveload-mode-tabs { margin-right: 14px; }
+.saveload-mode-tab { height: 22px; padding-left: 8px; padding-right: 8px; display: flex; flex-direction: row; align-items: center; justify-content: center; border-radius: 3px; }
+.saveload-mode-tab-active { background-color: #652449; }
+.saveload-mode-dot { width: 5px; height: 5px; background-color: #f9d89d; border-radius: 3px; margin-right: 5px; }
+.saveload-mode-text-active { font-size: 11px; font-weight: bold; color: #fff2e3; }
+.saveload-pager { margin-right: 14px; }
+.saveload-pager-btn { width: 28px; height: 24px; background-color: #48213e; border-width: 1px; border-style: solid; border-color: #a56b94; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
+.saveload-pager-btn-text { font-size: 16px; color: #ffffff; }
+.saveload-pager-text { width: 96px; font-size: 11px; text-align: center; color: #f5e2eb; }
+.saveload-header-close-btn { width: 72px; height: 24px; background-color: #733151; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
+.saveload-header-close-text { font-size: 11px; color: #fff4e8; }
+.saveload-body { position: absolute; left: 10px; top: 36px; width: 780px; height: 158px; display: flex; flex-direction: row; justify-content: space-between; }
+.saveload-left-pane { width: 230px; height: 158px; display: flex; flex-direction: column; justify-content: space-between; }
+.saveload-preview-box { width: 230px; height: 94px; background-color: #251226; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.saveload-preview-img { width: 167px; height: 94px; position: absolute; left: 31px; top: 0; }
+.saveload-preview-noimage { font-size: 14px; color: #b480a4; }
+.saveload-info-card { width: 230px; height: 58px; background-color: #27132b; display: flex; flex-direction: column; justify-content: space-around; }
+.saveload-info-row { width: 228px; height: 17px; display: flex; flex-direction: row; align-items: center; }
+.saveload-info-label { font-size: 9px; color: #e3b1c8; margin-right: 4px; }
+.saveload-info-val { font-size: 9px; color: #f0dbe7; }
+.saveload-right-grid { width: 540px; height: 158px; display: flex; flex-direction: row; flex-wrap: wrap; justify-content: space-between; align-content: space-between; }
+.saveload-slot-card { width: 174px; height: 76px; position: relative; background-color: #2a142c; border-width: 1px; border-style: solid; border-color: #7a466c; border-radius: 4px; overflow: hidden; }
+.saveload-slot-card-active { background-color: #52213e; border-color: #efc49b; }
+.saveload-slot-card-hasdata { border-color: #b37b9c; }
+.saveload-slot-header { position: absolute; left: 4px; top: 2px; width: 164px; height: 16px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; }
+.saveload-slot-code { font-size: 9px; color: #f3c6d8; }
+.saveload-slot-time { font-size: 8px; color: #d2b0c4; }
+.saveload-slot-body { position: absolute; left: 4px; top: 20px; width: 164px; height: 36px; background-color: #160b1a; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.saveload-slot-body-img { position: absolute; left: 50px; top: 0; width: 64px; height: 36px; }
+.saveload-slot-noimage { font-size: 10px; color: #ad83a0; }
+.saveload-slot-footer { position: absolute; left: 4px; top: 59px; width: 164px; height: 14px; display: flex; align-items: center; }
+.saveload-slot-desc { font-size: 9px; color: #f1dce7; }
+.saveload-bottom-bar { position: absolute; left: 10px; top: 198px; width: 780px; height: 20px; display: flex; align-items: center; justify-content: center; }
+.saveload-bottom-tip { font-size: 10px; color: #d2aec7; }
+
