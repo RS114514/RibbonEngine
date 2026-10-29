@@ -2,23 +2,24 @@
 
 > **The Ultrawide Visual Novel Engine for Embedded Devices**  
 > 专为嵌入式带鱼屏与有道词典笔量身打造的轻量级通用 Galgame / 视觉小说运行时容器。
+> 物理屏 960×266，Falcon/JQuick 逻辑视口固定 800×220。
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-RK3562%20%7C%20Linux%204.19-green.svg)](#)
-[![Display](https://img.shields.io/badge/Resolution-800x220%20Ultrawide-orange.svg)](#)
+[![Display](https://img.shields.io/badge/Display-800x220%20Logical-orange.svg)](#)
 [![Tests](https://img.shields.io/badge/Tests-Offline%20Suite%20PASS-brightgreen.svg)](#)
 
 ---
 
 ### 🎀 为什么命名为 RibbonEngine？
 
-1. **带鱼屏的形态美学**：设备 800×220 的物理显示比接近 4:1，极宽且极窄，如同一条舒展的宽幅**丝带（Ribbon）**。引擎将三栏布局与横卷画轴完美融合于这根“丝带”之中。
+1. **带鱼屏的形态美学**：设备逻辑视口 800×220，显示比接近 4:1，极宽且极窄，如同一条舒展的宽幅**丝带（Ribbon）**。引擎将三栏布局与横卷画轴完美融合于这根“丝带”之中。
 2. **视觉小说的情感纽带**：在 Galgame 的意象中，丝带（Ribbon）既是经典的少女发饰，也是象征命运牵引与故事分支的纽带。
 3. **轻快与纯粹**：单 C 原生混音插件配合轻量微前端，追求如丝带般丝滑流畅的运行体验。
 
 ---
 
-这是一个面向**网易有道词典笔（Rockchip RK3562 / Falcon + QuickJS 混合微前端）**的**通用纯净视觉小说（Galgame）运行时引擎**。
+这是一个面向**网易有道词典笔（Rockchip RK3562 / Falcon/JQuick + QuickJS 微前端）**的**通用纯净视觉小说（Galgame）运行时引擎**。
 本仓库定位为**通用底层引擎骨架与跨平台移植容器**，专供开发者移植任意商业或同人 GalGame 游戏。
 
 > ⚠️ **纯净声明与免责**：
@@ -35,7 +36,7 @@
    - **322px 文本区**：姓名标牌、打字机推进、历史回溯 Backlog、章节提示。
    - **88px 侧边栏**：快捷功能区（菜单、自动 Auto、快进 Skip、语音重播）。
 2. **高效 10 列台词契约**：
-   - 台词行采用紧凑定长数组格式：`[lineId, speaker, text, voice, bg, bgm, character, chapter, sd, fx]`，兼具极端低内存占用与高扩展性。
+   - 台词行采用紧凑定长数组格式：`[lineId, speaker, text, voice, bg, bgm, character, chapter, cg, sd]`，兼具极端低内存占用与高扩展性；演出事件走独立 fx 表。
 3. **原生软混音架构（`libjsapi_gal.so`）**：
    - 针对 RK3562 嵌入式单声卡（`/dev/snd/pcmC1D0p`）独占限制，自研了基于 GStreamer `appsrc`/`appsink` 的双声道 PCM 软件累加与饱和截断（saturation clipping）混音引擎，实现 BGM 与语音真正混音播放，彻底杜绝声卡被占死锁断流。
 4. **4-Tab 鉴赏系统（`app/pages/gallery/`）**：
@@ -49,8 +50,8 @@
 6. **系统设置与数据安全管理（`app/pages/title/`）**：
    - 支持 BGM 开关与精确音量调节（即时写入持久化存储）。
    - 新增「清除所有数据」功能，具备红色高危二次确认防误触弹窗，可安全清空全部存档槽位、历史回顾队列与已解锁标记。
-7. **精简过滤流程图（`app/pages/flowchart/`）**：
-   - 专为带鱼屏优化的决策树拓扑，精简展示章节起点与分支选择点，支持快速行号跳转。
+7. **路线级流程图（`app/pages/flowchart/`）**：
+   - 整条路线一次展示，章节只作为节点标签；支持拖动/方向键平移、跨线桥接和行号跳转，不再把每一章切成独立孤岛。
 
 ---
 
@@ -59,8 +60,8 @@
 为了让广大开发者（或开发者的 AI 编程助手）能够零门槛将任意游戏移植到本引擎，我们提供了全套指引与踩坑复盘：
 
 ### 1. AI 移植 Master Prompt
-我们准备了开箱即用的系统提示词文件：[`AI_PORTING_PROMPT.md`](AI_PORTING_PROMPT.md)。
-开发者只需将该文件内容直接发送给 Claude、GPT-4o、DeepSeek 或 Gemini 等大模型，AI 即可根据提示词中的三栏规范、10 列数据契约、资源转码规则，全自动为你编写对应游戏的提取与转换流水线！
+我们准备了修订版的移植契约：[`AI_PORTING_PROMPT.md`](AI_PORTING_PROMPT.md)。
+它不再承诺“一键全自动”，而是要求 AI 按 Phase A 样本、真实资源清单、validator、真机截图逐阶段交付；其中包含实际数据字段、CG 分组、立绘命名、章节规范化、流程图和常见故障速查。请把该文件连同目标游戏的样本资源清单一并交给 AI。
 
 ### 2. 真实移植实战工程与深度复盘（必读）
 本引擎是从《千恋＊万花》词典笔完整移植项目中提炼而来的纯净核心。如果你想了解移植全流程、解包转码实战以及各种嵌入式硬件踩坑经验，请参考：
@@ -125,8 +126,9 @@
 │   └── data/
 │       └── README.md                # 10 列剧本数据契约详细说明
 ├── tools/
-│   ├── build_data.py                # 转换生成 story_data / flowchart_data / gallery_data
-│   ├── import_assets.py             # 资源规范检查与推送脚本
+│   ├── build_data.py                # 转换生成 story_data / flowchart_data / gallery_data（含四 Tab 鉴赏字段）
+│   ├── validate_port.py             # 数据/行号/跳转/资源引用对账器（发布前必跑）
+│   ├── import_assets.py             # 资源规范检查与推送脚本（bg/fg/stand/sd/cg/bgm/voice/fx）
 │   ├── pack_amr.py                  # .amr 打包器
 │   └── test_*.mjs / test_*.py       # 离线全量单测套件
 ├── native/
@@ -151,7 +153,16 @@ python3 tools/build_data.py --src data_src --out app/data
 ```
 
 ### 2. 检查与推送资源
-使用 `tools/import_assets.py` 进行资源完整性校验与 ADB 脚本生成：
+先运行数据/素材对账器，再推送资源：
+
+```bash
+python3 tools/validate_port.py \
+  --data app/data \
+  --assets build/device_assets \
+  --strict
+```
+
+使用 `tools/import_assets.py` 进行资源整理与 ADB 脚本生成：
 
 ```bash
 python3 tools/import_assets.py \
@@ -185,6 +196,9 @@ python3 build.py --install
 本仓库包含完整的离线测试用例，无需硬件连接即可在本地验证核心逻辑：
 
 ```bash
+# 发布前先对账真实数据与素材引用
+python3 tools/validate_port.py --data app/data --assets build/device_assets --strict
+
 # 运行全部离线单元测试
 node tools/test_storage_scenario.mjs
 node tools/test_reactive_state.mjs

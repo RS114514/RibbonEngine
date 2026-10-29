@@ -37,15 +37,20 @@ VOICE_EXTS = {".ogg", ".opus", ".wav"}
 SOURCE_DIRS = {
     "bg": ("bg", IMAGE_EXTS),
     "fg": ("fg", IMAGE_EXTS),
+    "stand": ("stand", IMAGE_EXTS),
+    "sd": ("sd", IMAGE_EXTS),
     "bgm": ("bgm", BGM_EXTS),
     "voice": ("voice", VOICE_EXTS),
     "ema": ("bg/ema", IMAGE_EXTS),
     "cg": ("cg", IMAGE_EXTS),
+    "fx": ("fx", IMAGE_EXTS),
 }
 
 RECOMMENDED = {
     "bg": (960, 540),
     "fg": (780, 440),
+    "stand": (780, 440),
+    "sd": (390, 220),
 }
 
 
@@ -185,7 +190,7 @@ def collect(source: Path, stage: Path, do_hash: bool, strict_size: bool):
 
 def copy_entries(entries, stage: Path):
     stage.mkdir(parents=True, exist_ok=True)
-    for sub in ("bg", "bg/ema", "fg", "bgm", "voice", "cg"):
+    for sub in ("bg", "bg/ema", "fg", "stand", "sd", "bgm", "voice", "cg", "fx"):
         (stage / sub).mkdir(parents=True, exist_ok=True)
     for entry in entries:
         src = Path(entry["source"])
@@ -225,6 +230,15 @@ def check_refs(refs_path: Path, root: Path):
     for name in refs.get("sprites", []):
         if not exists_variant(root / "fg" / name, IMAGE_EXTS):
             missing.append("fg/%s" % name)
+    for name in refs.get("stand", []):
+        if not exists_variant(root / "stand" / name, IMAGE_EXTS):
+            missing.append("stand/%s" % name)
+    for name in refs.get("sd", []):
+        if not exists_variant(root / "sd" / name, IMAGE_EXTS):
+            missing.append("sd/%s" % name)
+    for name in refs.get("fx", []):
+        if not exists_variant(root / "fx" / name, IMAGE_EXTS):
+            missing.append("fx/%s" % name)
     for name in refs.get("voices", []):
         if not exists_variant(root / "voice" / name, VOICE_EXTS):
             missing.append("voice/%s" % name)

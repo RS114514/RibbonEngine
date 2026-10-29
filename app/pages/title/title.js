@@ -1,5 +1,5 @@
 // pages/title/title.js —— 主菜单与鉴赏/日后谈入口
-import { S, getGal, log } from '../../common.js';
+import { S, getGal, log, formatChapter } from '../../common.js';
 import { readAllSaves, readSettings, writeSettings, clearAllData, resolveSlotThumbnail } from '../../storage.js';
 import { STORY } from '../../data/story_data.js';
 import { bgmPath, bgUrl, isBlackBg, titleBgUrl } from '../../media.js';
@@ -104,7 +104,7 @@ export var titleMethods = {
       this.titleConfirmModal = {
         slotNum: slotNum,
         title: '读取进度确认',
-        subtitle: '载入目标：' + codeStr + '（' + (data.time || '——') + ' · ' + (data.chapter || '1-1') + '）',
+        subtitle: '载入目标：' + codeStr + '（' + (data.time || '——') + ' · ' + formatChapter(data.chapter) + '）',
         message: '是否确定载入该槽位的物语推进记录？',
         warn: '※ 提示：载入将直接跳转至目标物语进度，未保存进度将丢失'
       };
@@ -462,7 +462,7 @@ export function renderTitle(vm, h) {
       var selItem = tSaves['slot' + selSlot];
       var selBg = resolveSlotThumbnail(selItem);
       var selDate = selItem && selItem.time ? selItem.time : '——';
-      var selChapter = selItem && selItem.chapter ? selItem.chapter : '——';
+      var selChapter = formatChapter(selItem && selItem.chapter);
       var selComment = selItem ? (selItem.speaker ? '【' + selItem.speaker + '】' : '') + selItem.text : 'NO DATA';
 
       // 右侧 6 个槽位卡片

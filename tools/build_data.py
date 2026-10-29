@@ -124,6 +124,8 @@ def row_from_object(obj: dict) -> list:
         obj.get("bgm"),
         obj.get("character"),
         obj.get("chapter"),
+        obj.get("cg"),
+        obj.get("sd"),
     ]
 
 
@@ -134,8 +136,8 @@ def normalize_row(raw, index: int, default_chapter: str, where: str, warnings: l
         fail("%s 第 %d 行必须是数组或对象" % (where, index + 1))
     if len(raw) == 7:
         raw = list(raw) + [default_chapter]
-    if len(raw) != 8:
-        fail("%s 第 %d 行需要 7 或 8 个字段，实际 %d 个" % (where, index + 1, len(raw)))
+    if len(raw) not in (8, 9, 10):
+        fail("%s 第 %d 行需要 7~10 个字段，实际 %d 个" % (where, index + 1, len(raw)))
     line_id = raw[0]
     if line_id is None:
         line_id = index
@@ -162,7 +164,11 @@ def normalize_row(raw, index: int, default_chapter: str, where: str, warnings: l
         chapter = default_chapter or "--"
     if not isinstance(chapter, str):
         fail("%s 第 %d 行 chapter 必须是字符串" % (where, index + 1))
-    return [line_id, speaker, text, voice, bg, bgm, character, chapter.strip() or "--"]
+    cg = normalize_asset(raw[8], "%s 第 %d 行 cg" % (where, index + 1),
+                         IMAGE_EXTS, allow_subpath=True) if len(raw) > 8 else None
+    sd = normalize_asset(raw[9], "%s 第 %d 行 sd" % (where, index + 1),
+                         IMAGE_EXTS, allow_subpath=True) if len(raw) > 9 else None
+    return [line_id, speaker, text, voice, bg, bgm, character, chapter.strip() or "--", cg, sd]
 
 
 def normalize_story(rows, where: str, default_chapter: str, warnings: list[str]):
@@ -314,13 +320,32 @@ def normalize_flowchart(raw, warnings: list[str]):
 
 def normalize_gallery(raw, warnings: list[str]):
     if raw is None:
-        return {"cg": [], "bgm": []}
+        return {"cgGroups": [], "cg": [], "sceneGroups": [], "scenes": [],
+                "standChars": [], "standBackgrounds": [], "bgm": []}
     if not isinstance(raw, dict):
         fail("gallery 必须是对象")
     cg_raw = raw.get("cg") or []
     bgm_raw = raw.get("bgm") or []
     if not isinstance(cg_raw, list) or not isinstance(bgm_raw, list):
         fail("gallery.cg / gallery.bgm 必须是数组")
+
+    def key_of(item, field):
+        value = item.get("key") or item.get("id")
+        if not isinstance(value, str) or not SAFE_KEY.match(value):
+            fail("%s 的 key 只能包含字母、数字、下划线: %r" % (field, value))
+        return value
+
+    cg_groups = []
+    group_keys = set()
+    for index, item in enumerate(raw.get("cgGroups") or []):
+        if not isinstance(item, dict):
+            fail("gallery.cgGroups 第 %d 项必须是对象" % (index + 1))
+        key = key_of(item, "cgGroups[%d]" % index)
+        if key in group_keys:
+            fail("gallery.cgGroups key 重复: %s" % key)
+        group_keys.add(key)
+        cg_groups.append({"key": key, "name": str(item.get("name") or key)})
+
     cg = []
     for index, item in enumerate(cg_raw):
         if not isinstance(item, dict):
@@ -328,12 +353,84 @@ def normalize_gallery(raw, warnings: list[str]):
         file_name = normalize_asset(item.get("file"), "gallery.cg[%d].file" % index, IMAGE_EXTS, allow_subpath=True)
         if not file_name:
             fail("gallery.cg 第 %d 项缺少 file" % (index + 1))
+        group = str(item.get("group") or item.get("role") or "")
+        if not group:
+            fail("gallery.cg 第 %d 项缺少 group/role" % (index + 1))
+        if group_keys and group not in group_keys:
+            fail("gallery.cg 第 %d 项 group=%s 不在 cgGroups 中" % (index + 1, group))
         cg.append({
             "id": str(item.get("id") or ("cg_%d" % (index + 1))),
             "code": str(item.get("code") or ("CG%02d" % (index + 1))),
-            "role": str(item.get("role") or ""),
+            "group": group,
+            "role": str(item.get("role") or group),
             "file": file_name,
+            "unlocked": bool(item.get("unlocked", True)),
         })
+    if not cg_groups and cg:
+        for group in sorted({item["group"] for item in cg}):
+            cg_groups.append({"key": group, "name": group})
+
+    scene_groups = []
+    scene_keys = set()
+    for index, item in enumerate(raw.get("sceneGroups") or []):
+        if not isinstance(item, dict):
+            fail("gallery.sceneGroups 第 %d 项必须是对象" % (index + 1))
+        key = key_of(item, "sceneGroups[%d]" % index)
+        scene_keys.add(key)
+        scene_groups.append({"key": key, "name": str(item.get("name") or key)})
+
+    scenes = []
+    for index, item in enumerate(raw.get("scenes") or []):
+        if not isinstance(item, dict):
+            fail("gallery.scenes 第 %d 项必须是对象" % (index + 1))
+        group = str(item.get("group") or item.get("route") or "")
+        if scene_keys and group not in scene_keys:
+            fail("gallery.scenes 第 %d 项 group=%s 不在 sceneGroups 中" % (index + 1, group))
+        variants = item.get("variants") or ([item.get("cover")] if item.get("cover") else [])
+        if not isinstance(variants, list):
+            fail("gallery.scenes 第 %d 项 variants 必须是数组" % (index + 1))
+        clean_variants = []
+        for v in variants:
+            value = normalize_asset(v, "gallery.scenes[%d].variants" % index, IMAGE_EXTS, allow_subpath=True)
+            if value:
+                clean_variants.append(value)
+        scenes.append({
+            "id": str(item.get("id") or ("scene_%d" % (index + 1))),
+            "title": str(item.get("title") or item.get("name") or ""),
+            "group": group,
+            "route": str(item.get("route") or group),
+            "cover": clean_variants[0] if clean_variants else "",
+            "variants": clean_variants,
+        })
+
+    stand_chars = []
+    for index, item in enumerate(raw.get("standChars") or []):
+        if not isinstance(item, dict):
+            fail("gallery.standChars 第 %d 项必须是对象" % (index + 1))
+        char = item.get("char") or item.get("key")
+        if not isinstance(char, str) or not char:
+            fail("gallery.standChars 第 %d 项缺少 char/key" % (index + 1))
+        dresses = item.get("dresses") or []
+        if not isinstance(dresses, list) or not dresses:
+            fail("gallery.standChars 第 %d 项 dresses 必须是非空数组" % (index + 1))
+        stand_chars.append({
+            "key": str(item.get("key") or char),
+            "name": str(item.get("name") or char),
+            "char": char,
+            "dresses": [str(d) for d in dresses],
+            "faces": max(1, int(item.get("faces") or 1)),
+        })
+
+    stand_backgrounds = []
+    for index, item in enumerate(raw.get("standBackgrounds") or []):
+        if not isinstance(item, dict):
+            fail("gallery.standBackgrounds 第 %d 项必须是对象" % (index + 1))
+        stand_backgrounds.append({
+            "name": str(item.get("name") or ("背景 %d" % (index + 1))),
+            "file": normalize_asset(item.get("file"), "gallery.standBackgrounds[%d].file" % index,
+                                    IMAGE_EXTS, allow_subpath=True) or "",
+        })
+
     bgm = []
     for index, item in enumerate(bgm_raw):
         if not isinstance(item, dict):
@@ -344,9 +441,18 @@ def normalize_gallery(raw, warnings: list[str]):
         bgm.append({
             "id": str(item.get("id") or ("bgm_%d" % (index + 1))),
             "code": str(item.get("code") or file_name),
+            "title": str(item.get("title") or item.get("name") or ""),
             "file": file_name,
         })
-    return {"cg": cg, "bgm": bgm}
+    return {
+        "cgGroups": cg_groups,
+        "cg": cg,
+        "sceneGroups": scene_groups,
+        "scenes": scenes,
+        "standChars": stand_chars,
+        "standBackgrounds": stand_backgrounds,
+        "bgm": bgm,
+    }
 
 
 def load_story(src: Path, warnings: list[str]):
@@ -417,6 +523,7 @@ def collect_manifest(main, after, after_meta, flow, gallery):
     sprites = set()
     covers = set()
     cg_files = set()
+    sd_files = set()
 
     def add_rows(rows):
         for row in rows:
@@ -436,6 +543,10 @@ def collect_manifest(main, after, after_meta, flow, gallery):
                         character.get("dress") or "default",
                         character.get("face") or "01",
                     ))
+            if len(row) > 8 and row[8]:
+                cg_files.add(row[8])
+            if len(row) > 9 and row[9]:
+                sd_files.add(row[9])
 
     add_rows(main)
     for rows in after.values():
@@ -457,6 +568,7 @@ def collect_manifest(main, after, after_meta, flow, gallery):
         "bgms": sorted(bgms),
         "covers": sorted(covers),
         "cg": sorted(cg_files),
+        "sd": sorted(sd_files),
     }
 
 

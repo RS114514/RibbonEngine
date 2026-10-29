@@ -80,6 +80,27 @@ class CssParsingTests(unittest.TestCase):
         self.assertEqual({"color": "#fff"}, rules.get("active"))
         self.assertEqual({"color": "#000"}, rules.get("b"))
 
+    def test_border_padding_margin_shorthands_expand_to_longhand(self):
+        rules = self.parse_css(
+            ".box {\n"
+            "  border: 1px solid #ffffff;\n"
+            "  padding: 2px 6px;\n"
+            "  margin: 4px;\n"
+            "}\n"
+        )["box"]
+        self.assertEqual("1px", rules["borderWidth"])
+        self.assertEqual("solid", rules["borderStyle"])
+        self.assertEqual("#ffffff", rules["borderColor"])
+        self.assertEqual("2px", rules["paddingTop"])
+        self.assertEqual("6px", rules["paddingRight"])
+        self.assertEqual("4px", rules["marginBottom"])
+
+    def test_malformed_css_is_rejected_instead_of_silently_ignored(self):
+        with self.assertRaises(ValueError):
+            self.parse_css(".a { color: #fff; }\n  width: 10px;\n}")
+        with self.assertRaises(ValueError):
+            self.parse_css(".a { background: #000; }")
+
     def test_check_bounds_accepts_limit_and_rejects_oversize(self):
         check_bounds = self.ns["check_bounds"]
         self.assertEqual([], check_bounds("ok", {"height": "220px", "width": "800px"}))

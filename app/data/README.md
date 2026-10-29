@@ -3,7 +3,13 @@
 本目录**不附带任何特定游戏的剧本、角色名、章节名或商业资源清单**。除本说明文档外，`app/data/` 目录下的
 `story_data.js`、`flowchart_data.js`、`gallery_data.js` 均应由开发者使用自身合法持有的游戏数据转码生成。这些生成文件已被 `.gitignore` 忽略，严禁提交到公开仓库中。
 
-转换构建工具：`tools/build_data.py`。完整流程见仓库根目录 `README.md` 与 `AI_PORTING_PROMPT.md`。
+转换构建工具：`tools/build_data.py`。生成后必须运行：
+
+```bash
+python3 tools/validate_port.py --data app/data --assets build/device_assets --strict
+```
+
+完整流程见仓库根目录 `README.md` 与 `AI_PORTING_PROMPT.md`。
 
 ---
 
@@ -29,7 +35,7 @@ export var STORY = {
   after: { /* afterKey -> 后日谈台词行数组 */ },
   afterMeta: [ /* 后日谈卡片元数据 */ ],
   choices: [ /* 交互选择支配置数组 */ ],
-  fx: { /* 剧本行演出特效事件表 */ },
+  fxEvents: { /* 可选：剧本行演出特效事件表，key 为 scenario */ },
   meta: {
     gameId: "my_game",
     titleBgm: "bgm_title"
@@ -51,17 +57,22 @@ export var STORY = {
   bgm,        // 5: string|null：BGM 音频基名（如 "bgm01" 或 "bgm01.opus"）
   character,  // 6: object|null：舞台立绘数据对象，见下文
   chapter,    // 7: string：章节或场景提示（如 "第1章"、"AFTER 1"），缺省时显示 "--"
-  sd,         // 8: string|null：SD/Q版舞台图片基名（如 "sd_happy"），等比居中渲染
-  fx          // 9: string|array|null：行内简易演出标记（如 "W" 白闪、"F" 黑幕、"S" 震屏等）
+  cg,         // 8: string|null：事件 CG 基名（如 "ev101a"），优先于背景/立绘
+  sd          // 9: string|null：SD/Q版舞台图片基名（如 "sd_happy"），等比居中渲染
 ]
 ```
+
+> 注意：第 9 列是 **CG**，第 10 列是 **SD**。这是引擎 `game.js` 的实际读取顺序；旧版文档曾把两者写反。
+> 演出事件不属于台词 10 列，统一通过 `STORY.fxEvents` / 转码器生成的 fx 表提供。
 
 #### 资源路径解析规则（由 `app/media.js` 统一调度）
 - `voice` 解析为：`/userdisk/gal_data/<game_id>/voice/<voice>.ogg`（兼容 `.opus`/`.wav`）。
 - `bg` 解析为：`/userdisk/gal_data/<game_id>/bg/<bg>.png`（背景特殊关键字 `__black__` 或 `画面_黒` 渲染为全黑层）。
 - `bgm` 解析为：`/userdisk/gal_data/<game_id>/bgm/<bgm>.opus`（兼容 `.ogg`/`.mp3`）。
+- `cg` 解析为：`/userdisk/gal_data/<game_id>/cg/<cg>.png`（事件 CG，优先于背景/立绘）。
 - `sd` 解析为：`/userdisk/gal_data/<game_id>/sd/<sd>.png`。
 - `character.sprite` 解析为：`/userdisk/gal_data/<game_id>/fg/<sprite>.png`。
+- `character.char + dress + face` 解析为：`/userdisk/gal_data/<game_id>/fg/<char>_<dress>_<face>.png`；素材必须使用实际文件名，不能假设中文名会自动映射到日文名。
 
 ### 2.2 `character` 立绘字段
 
@@ -135,7 +146,7 @@ export var FLOWCHART = {
 };
 ```
 
-引擎流程图界面支持精简过滤：仅渲染 `select`、`branch`、`warp` 及选项对应的重要节点，避免全量台词节点撑爆屏幕与内存。
+引擎流程图界面按**整条路线**展示 `select`、`branch`、`warp` 及它们对应的重要节点；章节只作为节点标签。不要给每个章节只生成一个节点，否则界面会退化成“一章一屏”。节点较多时用拖动/方向键平移，而不是把每个章节切成独立孤岛。
 
 ---
 
@@ -145,36 +156,33 @@ export var FLOWCHART = {
 
 ```js
 export var GALLERY = {
-  // 1. CG 鉴赏
+  // 1. CG 鉴赏：group 列表与扁平的 cg 列表；引擎按 group 过滤 cg
   cgGroups: [
-    {
-      "id": "group_event",
-      "name": "主线事件",
-      "items": [
-        { "id": "cg_01", "name": "相逢", "file": "cg_001", "unlocked": true }
-      ]
-    }
+    { "key": "group_event", "name": "主线事件" },
+    { "key": "heroine_a", "name": "女主角 A" }
+  ],
+  cg: [
+    { "id": "cg_01", "code": "CG01", "group": "group_event",
+      "role": "group_event", "file": "cg_001", "unlocked": true }
   ],
   // 2. 场景回忆
   sceneGroups: [
-    {
-      "id": "scene_01",
-      "name": "名场面回忆",
-      "scenario": "main",
-      "startLine": 100,
-      "endLine": 250,
-      "thumb": "cg_001"
-    }
+    { "key": "heroine_a", "name": "女主角 A 回忆" }
   ],
-  // 3. 立绘差分鉴赏
+  scenes: [
+    { "id": "scene_01", "title": "名场面", "group": "heroine_a",
+      "route": "heroine_a", "cover": "cg_001",
+      "variants": ["cg_001", "cg_002"] }
+  ],
+  // 3. 立绘差分鉴赏：char/dresses/faces 是引擎实际读取字段
   standChars: [
-    {
-      "id": "char_a",
-      "name": "主角A",
-      "costumes": [
-        { "id": "uniform", "name": "校服", "files": ["char_a_01", "char_a_02"] }
-      ]
-    }
+    { "key": "heroine_a", "name": "女主角 A", "char": "hero_a",
+      "dresses": ["uniform", "casual"], "faces": 20 }
+  ],
+  // 立绘背景必须是不含人物的纯场景图；空 file 表示纯黑
+  standBackgrounds: [
+    { "name": "教室", "file": "classroom" },
+    { "name": "纯黑", "file": "" }
   ],
   // 4. BGM 音乐盒
   bgm: [
@@ -182,6 +190,10 @@ export var GALLERY = {
   ]
 };
 ```
+
+> 关键陷阱：引擎读取 `GALLERY.cg` 的扁平列表和 `cgGroups[].key`，**不是** `cgGroups[].items`。
+> `standChars` 使用 `char` / `dresses` / `faces`，不是 `costumes` / `files`。每张 `cg.file` 必须存在，
+> 每个 `cg.group` 必须对应一个 `cgGroups.key`，不要留下 0 张的分组。
 
 ---
 

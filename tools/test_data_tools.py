@@ -108,6 +108,32 @@ class BuildDataTests(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("..", result.stderr)
 
+    def test_build_data_preserves_full_four_tab_gallery_schema(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp = Path(tmp)
+            src = self.make_source(tmp)
+            (src / "gallery.json").write_text(json.dumps({
+                "cgGroups": [{"key": "main", "name": "主线"}, {"key": "hero", "name": "女主"}],
+                "cg": [{"id": "cg1", "group": "hero", "file": "cg_0001"}],
+                "sceneGroups": [{"key": "hero", "name": "女主回忆"}],
+                "scenes": [{"id": "s1", "title": "相遇", "group": "hero",
+                            "cover": "cg_0001", "variants": ["cg_0001"]}],
+                "standChars": [{"key": "hero", "name": "女主", "char": "hero",
+                                "dresses": ["uniform"], "faces": 20}],
+                "standBackgrounds": [{"name": "教室", "file": "bg_room"}],
+                "bgm": [{"id": "bgm1", "file": "bgm_01.opus"}]
+            }, ensure_ascii=False), encoding="utf-8")
+            out = tmp / "out"
+            result = run([BUILD_DATA, "--src", src, "--out", out])
+            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            text = (out / "gallery_data.js").read_text(encoding="utf-8")
+            gallery = json.loads(text.split(" = ", 1)[1].rstrip(";\n"))
+            self.assertEqual(["main", "hero"], [g["key"] for g in gallery["cgGroups"]])
+            self.assertEqual("hero", gallery["cg"][0]["group"])
+            self.assertEqual("hero", gallery["standChars"][0]["char"])
+            self.assertEqual(["uniform"], gallery["standChars"][0]["dresses"])
+            self.assertEqual("相遇", gallery["scenes"][0]["title"])
+
     def test_import_assets_copies_and_checks_refs(self):
         with tempfile.TemporaryDirectory() as tmp:
             tmp = Path(tmp)

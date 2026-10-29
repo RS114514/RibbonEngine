@@ -1,5 +1,5 @@
 // pages/game/game.js —— 超宽带鱼屏 390+322+88 分栏视觉小说主引擎
-import { S, getGal, log, getChapterByLine } from '../../common.js';
+import { S, getGal, log, getChapterByLine, formatChapter } from '../../common.js';
 import {
   readAllSaves,
   writeAllSaves,
@@ -11,11 +11,7 @@ import {
 } from '../../storage.js';
 import { STORY } from '../../data/story_data.js';
 import { FLOWCHART } from '../../data/flowchart_data.js';
-import { voicePath, bgmPath, bgUrl, fgUrl, isBlackBg } from '../../media.js';
-
-var safeCgUrl = typeof cgUrl === 'function' ? cgUrl : function (name) { return name ? 'file:///userdisk/gal_data/cg/' + name + '.png' : ''; };
-var safeSdUrl = function (name) { return name ? 'file:///userdisk/gal_data/sd/' + name + '.png' : ''; };
-var safeFxUrl = function (name) { return name ? 'file:///userdisk/gal_data/fx/' + name + '.png' : ''; };
+import { voicePath, bgmPath, bgUrl, fgUrl, cgUrl, sdUrl, fxUrl, isBlackBg } from '../../media.js';
 
 var FLOW_NODES = FLOWCHART.nodes || [];
 var FLOW_CHOICES = FLOWCHART.choices || [];
@@ -262,7 +258,7 @@ export var gameMethods = {
 
   fxOverlayPath: function (kind) {
     if (!kind) return '';
-    return safeFxUrl(kind);
+    return fxUrl(kind);
   },
 
   runLineFx: function (row, nextRow) {
@@ -429,7 +425,7 @@ export var gameMethods = {
     if (row[2]) {
       pushBacklog({
         id: this.currentLine,
-        chapter: row[7] || getChapterByLine(this.currentLine),
+        chapter: formatChapter(row[7] || getChapterByLine(this.currentLine)),
         speaker: row[1] || '',
         text: row[2] || '',
         voice: row[3] || null,
@@ -802,12 +798,12 @@ export function renderGame(vm, h) {
   var text = row[2] || '';
   var bg = row[4] || '';
   var charInfo = row[6];
-  var chapter = row[7] || '--';
+  var chapter = formatChapter(row[7] || '--');
   var cg = row.length > 8 ? row[8] : '';
   var sd = row.length > 9 ? row[9] : '';
 
-  var cgSrc = cg ? safeCgUrl(cg) : '';
-  var sdSrc = cg ? '' : (sd ? safeSdUrl(sd) : '');
+  var cgSrc = cg ? cgUrl(cg) : '';
+  var sdSrc = cg ? '' : (sd ? sdUrl(sd) : '');
   var bgSrc = (!cg && !isBlackBg(bg)) ? bgUrl(bg) : '';
   var fgSrc = (!cg && !sd && charInfo) ? getSpriteUrl(charInfo) : '';
 

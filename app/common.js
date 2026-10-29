@@ -44,9 +44,15 @@ export {
 // 章节名由数据行提供；缺失时返回可读占位，不再猜测游戏章节区间。
 export function getChapterByLine(line) {
   if (typeof line === 'string' && line.trim()) {
-    return line.trim();
+    return formatChapter(line);
   }
   return '--';
+}
+
+// 原版脚本常见的 `chapter　2-1` / `CHAPTER 2-1` 不应原样显示在窄屏上。
+export function formatChapter(value) {
+  var text = String(value || '').replace(/^chapter[\s\u3000]*/i, '').replace(/\s+/g, ' ').trim();
+  return text || '--';
 }
 
 export function S(name, extra) {

@@ -71,13 +71,6 @@
   font-size: 8px;
   color: #ffe8cb;
 }
-  width: 18px;
-  height: 138px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-}
 
 .title-scroll-arrow {
   width: 18px;

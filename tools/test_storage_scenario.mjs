@@ -31,3 +31,18 @@ assert.equal(record.scenario, 'after_heroine_a');
 assert.equal(persisted.slot1.scenario, 'after_heroine_a');
 assert.equal(persisted.slot1.line, 42);
 console.log('PASS scenario is persisted with save slot data');
+
+globalThis.__testGal.readText = () => JSON.stringify({
+  slot2: {
+    date: '10-25 12:00',
+    chapter: 'chapter　2-1',
+    choiceSelections: { c1: 2 },
+    choiceFlags: { flag_a: 1 }
+  }
+});
+const legacy = storage.readAllSaves();
+assert.equal(legacy.slot2.time, '10-25 12:00');
+assert.equal(legacy.slot2.chapter, 'chapter　2-1');
+assert.deepEqual(legacy.slot2.extra.choices, { c1: 2 });
+assert.deepEqual(legacy.slot2.extra.flags, { flag_a: 1 });
+console.log('PASS legacy save fields are normalized on read');

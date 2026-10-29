@@ -12,6 +12,7 @@ const commonStub = `
 export function S(names, extra) { return Object.assign({ classes: names }, extra || {}); }
 export function log() {}
 export function getChapterByLine() { return '--'; }
+export function formatChapter(value) { var text = String(value || '').replace(/^chapter[\s\u3000]*/i, '').replace(/\s+/g, ' ').trim(); return text || '--'; }
 export function getGal() { return globalThis.__renderGal; }
 `;
 
@@ -40,6 +41,8 @@ export function bgUrl(name) {
 }
 export function fgUrl(name) { return 'file:///userdisk/gal_data/fg/' + withExt(name, '.png'); }
 export function cgUrl(name) { return 'file:///userdisk/gal_data/cg/' + withExt(name, '.png'); }
+export function sdUrl(name) { return 'file:///userdisk/gal_data/sd/' + withExt(name, '.png'); }
+export function fxUrl(name) { return 'file:///userdisk/gal_data/fx/' + withExt(name, '.png'); }
 export function coverUrl(name) { return 'file:///userdisk/gal_data/bg/' + name; }
 export function titleBgUrl() { return 'file:///userdisk/gal_data/bg/title_bg.png'; }
 export function isBlackBg(name) { return !name || name === '__black__' || name === '画面_黒'; }
@@ -87,7 +90,7 @@ async function loadPage(path, replacements) {
 }
 
 const commonReplacement = [
-  [/import \{[^}]+\} from '\.\.\/\.\.\/common\.js';/, `import { S, getGal, log, getChapterByLine } from '${dataUrl(commonStub)}';`]
+  [/import \{[^}]+\} from '\.\.\/\.\.\/common\.js';/, `import { S, getGal, log, getChapterByLine, formatChapter } from '${dataUrl(commonStub)}';`]
 ];
 
 const game = await loadPage('app/pages/game/game.js', [
@@ -95,7 +98,7 @@ const game = await loadPage('app/pages/game/game.js', [
   [/import \{[^']*?\} from '\.\.\/\.\.\/storage\.js';/, `import { readAllSaves, writeAllSaves, saveSlotRecord, loadSlotRecord, getNowDateStr, pushBacklog, readSettings } from '${dataUrl(storageStub)}';`],
   [/import \{ STORY \} from '\.\.\/\.\.\/data\/story_data\.js';/, `import { STORY } from '${storyStub}';`],
   [/import \{ FLOWCHART \} from '\.\.\/\.\.\/data\/flowchart_data\.js';/, `import { FLOWCHART } from '${flowchartStub}';`],
-  [/import \{[^}]+\} from '\.\.\/\.\.\/media\.js';/, `import { voicePath, bgmPath, bgUrl, fgUrl, isBlackBg } from '${dataUrl(mediaStub)}';`]
+  [/import \{[^}]+\} from '\.\.\/\.\.\/media\.js';/, `import { voicePath, bgmPath, bgUrl, fgUrl, cgUrl, sdUrl, fxUrl, isBlackBg } from '${dataUrl(mediaStub)}';`]
 ]);
 
 const flowchart = await loadPage('app/pages/flowchart/flowchart.js', [
@@ -152,6 +155,8 @@ test('game renders data-driven line, sprite, background and voice', () => {
   const tree = game.renderGame(vm, h);
   const body = text(tree);
   assert.match(body, /Line one/);
+  assert.match(body, /1-1/);
+  assert.doesNotMatch(body, /CHAPTER/);
   assert.match(body, /1 \/ 2/);
   assert.ok(calls.some((call) => call[0] === 'playVoice' && call[1].endsWith('/voice_1.ogg')));
   assert.ok(calls.some((call) => call[0] === 'stopBgm'));
@@ -178,6 +183,7 @@ test('flowchart renders generated nodes and jumps to a target line', () => {
   vm.initFlowchart();
   const body = text(flowchart.renderFlowchart(vm, h));
   assert.match(body, /Node 1/);
+  assert.doesNotMatch(body, /上一章|下一章/);
   assert.match(body, /Node 2/);
 
   const jumps = [];

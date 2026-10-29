@@ -16,6 +16,7 @@ export function S(names, extra) {
 }
 export function log() {}
 export function getChapterByLine() { return '1-1'; }
+export function formatChapter(value) { var text = String(value || '').replace(/^chapter[\s\u3000]*/i, '').replace(/\s+/g, ' ').trim(); return text || '--'; }
 export function getGal() { return globalThis.__audioTestGal; }
 `;
 
@@ -52,6 +53,12 @@ export function fgUrl(name) {
 export function cgUrl(name) {
   return 'file:///userdisk/gal_data/cg/' + name + (name.indexOf('.') >= 0 ? '' : '.png');
 }
+export function sdUrl(name) {
+  return 'file:///userdisk/gal_data/sd/' + name + (name.indexOf('.') >= 0 ? '' : '.png');
+}
+export function fxUrl(name) {
+  return 'file:///userdisk/gal_data/fx/' + name + (name.indexOf('.') >= 0 ? '' : '.png');
+}
 export function titleBgUrl() { return 'file:///userdisk/gal_data/bg/title_bg.png'; }
 export function isBlackBg(name) { return !name || name === '__black__' || name === '画面_黒'; }
 `;
@@ -76,7 +83,7 @@ const galleryStub = dataUrl('export var GALLERY = ' + JSON.stringify({
 let gameSource = await readFile(GAME_URL, 'utf8');
 gameSource = gameSource.replace(
   /import \{[^}]+\} from '\.\.\/\.\.\/common\.js';/,
-  `import { S, getGal, log, getChapterByLine } from '${dataUrl(commonStub)}';`
+  `import { S, getGal, log, getChapterByLine, formatChapter } from '${dataUrl(commonStub)}';`
 );
 gameSource = gameSource.replace(
   /import \{[^']*?\} from '\.\.\/\.\.\/storage\.js';/,
@@ -92,7 +99,7 @@ gameSource = gameSource.replace(
 );
 gameSource = gameSource.replace(
   /import \{[^}]+\} from '\.\.\/\.\.\/media\.js';/,
-  `import { voicePath, bgmPath, bgUrl, fgUrl, isBlackBg } from '${dataUrl(mediaStub)}';`
+  `import { voicePath, bgmPath, bgUrl, fgUrl, cgUrl, sdUrl, fxUrl, isBlackBg } from '${dataUrl(mediaStub)}';`
 );
 assert.doesNotMatch(gameSource, /from '\.\.\/\.\.\/(?:common|storage|data|media)\//, 'game.js must load with native dependencies stubbed');
 const { gameMethods } = await import(dataUrl(gameSource));
