@@ -279,6 +279,17 @@ def check_bounds(name, r):
     return ["  .%s: %s" % (name, e) for e in errs]
 
 
+def check_css_layout(styles):
+    """Falcon 的 flex 规则若没有 display:flex，实际会按块级布局，按钮会错位。"""
+    bad = []
+    for name, rule in styles.items():
+        if any(key in rule for key in ("flexDirection", "alignItems", "justifyContent")) and rule.get("display") != "flex":
+            bad.append("." + name)
+    if bad:
+        print("[x] CSS flex 契约失败（缺少 display:flex）: " + ", ".join(sorted(bad)[:40]))
+        sys.exit(1)
+
+
 def check_ui_classes(styles):
     """确保 JS 里 S('...') 使用的静态类名真的在合并后的 CSS 中存在。
 
@@ -322,6 +333,7 @@ def build_styles(out_dir):
     if errs:
         print("[x] CSS 尺寸越界:\n" + "\n".join(errs))
         sys.exit(1)
+    check_css_layout(styles)
     check_ui_classes(styles)
     src = "// 由 build.py 从 CSS 生成，勿手改\nvar ST = %s;\nexport default ST;\n" % json.dumps(
         styles, ensure_ascii=False, indent=1)

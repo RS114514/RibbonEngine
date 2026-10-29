@@ -185,6 +185,21 @@ test('game renders usable history and save/load overlays instead of blank modals
   assert.match(text(game.renderGame(vm, h)), /DATA LOAD/);
 });
 
+test('stage zoom overlay is visible and can cycle its scale', () => {
+  makeGal();
+  const vm = Object.assign(Object.create(game.gameMethods), { view: 'game' });
+  vm.initGame('main', 1);
+  vm.toggleZoom();
+  const body = text(game.renderGame(vm, h));
+  assert.match(body, /退出特写/);
+  assert.match(body, /1\.0x/);
+  assert.match(body, /\+ 放大/);
+  vm.cycleZoomScale();
+  assert.equal(vm.gameZoomIndex, 1);
+  vm.zoomOutGameImg();
+  assert.equal(vm.gameZoomIndex, 0);
+});
+
 test('afterstory renders cards and starts the generated scenario', () => {
   makeGal();
   const vm = Object.assign(Object.create(afterstory.afterstoryMethods), { view: 'afterstory' });

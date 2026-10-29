@@ -739,11 +739,17 @@ export var gameMethods = {
 
   openSaveModal: function () {
     this.modalType = 'save';
+    this.savePage = 0;
+    this.selectedSlot = 1;
+    this.saveNotice = '';
     this.modalSaves = readAllSaves() || {};
   },
 
   openLoadModal: function () {
     this.modalType = 'load';
+    this.savePage = 0;
+    this.selectedSlot = 1;
+    this.saveNotice = '';
     this.modalSaves = readAllSaves() || {};
   },
 
@@ -754,6 +760,21 @@ export var gameMethods = {
   closeModal: function () {
     this.modalType = '';
     this.confirmModal = null;
+  },
+
+  exitToTitle: function () {
+    var G = getGal();
+    if (G) {
+      G.stopVoice();
+      G.stopBgm();
+    }
+    this.autoPlay = false;
+    this.skipMode = false;
+    this.clearAutoTimer();
+    this.modalType = '';
+    this.confirmModal = null;
+    this.view = 'title';
+    if (typeof this.initTitle === 'function') this.initTitle();
   },
 
   changeSavePage: function (delta) {
@@ -813,10 +834,29 @@ export var gameMethods = {
 
   toggleZoom: function () {
     this.zoomMode = !this.zoomMode;
+    if (this.zoomMode) {
+      this.gameZoomIndex = 0;
+      this.gameImgPanX = 0;
+      this.gameImgPanY = 0;
+    }
   },
 
   cycleZoomScale: function () {
     this.gameZoomIndex = ((this.gameZoomIndex || 0) + 1) % GAME_ZOOM_LEVELS.length;
+  },
+
+  zoomInGameImg: function () {
+    this.gameZoomIndex = Math.min((this.gameZoomIndex || 0) + 1, GAME_ZOOM_LEVELS.length - 1);
+  },
+
+  zoomOutGameImg: function () {
+    this.gameZoomIndex = Math.max((this.gameZoomIndex || 0) - 1, 0);
+  },
+
+  resetGameZoom: function () {
+    this.gameZoomIndex = 0;
+    this.gameImgPanX = 0;
+    this.gameImgPanY = 0;
   },
 
   onStageTouchStart: function (e) {
@@ -1151,6 +1191,52 @@ export function renderGame(vm, h) {
     ]));
   }
 
+  // 全屏舞台特写：点击舞台后必须有可见的缩放界面
+  if (vm.zoomMode) {
+    var z = GAME_ZOOM_LEVELS[vm.gameZoomIndex || 0] || GAME_ZOOM_LEVELS[0];
+    var zLeft = Math.round((664 - z.w) / 2 + (vm.gameImgPanX || 0));
+    var zTop = Math.round((220 - z.h) / 2 + (vm.gameImgPanY || 0));
+    var zoomImages = [];
+    if (bgSrc || cgSrc || sdSrc) {
+      zoomImages.push(h('image', {
+        staticStyle: S('game-zoom-img', { left: zLeft + 'px', top: zTop + 'px', width: z.w + 'px', height: z.h + 'px' }),
+        attrs: { src: bgSrc || cgSrc || sdSrc, resize: 'contain' }
+      }));
+    }
+    if (fgSrc) {
+      zoomImages.push(h('image', {
+        staticStyle: S('game-zoom-char', { left: zLeft + 'px', top: zTop + 'px', width: z.w + 'px', height: z.h + 'px' }),
+        attrs: { src: fgSrc, resize: 'contain' }
+      }));
+    }
+    rootChildren.push(h('div', { staticStyle: S('game-zoom-overlay') }, [
+      h('div', { staticStyle: S('game-zoom-left-wing') }, [
+        h('div', { staticStyle: S('game-zoom-wing-btn-exit'), on: { click: function () { vm.toggleZoom(); } } }, [
+          h('text', { staticStyle: S('game-zoom-wing-btn-text') }, '退出特写')
+        ])
+      ]),
+      h('div', { staticStyle: S('game-zoom-viewport'), on: { click: function () { vm.cycleZoomScale(); } } }, zoomImages.concat([
+        h('div', { staticStyle: S('game-zoom-header') }, [
+          h('text', { staticStyle: S('game-zoom-header-text') }, '舞台特写 · ' + chapter)
+        ])
+      ])),
+      h('div', { staticStyle: S('game-zoom-right-wing') }, [
+        h('div', { staticStyle: S('game-zoom-wing-btn'), on: { click: function () { vm.zoomInGameImg(); } } }, [
+          h('text', { staticStyle: S('game-zoom-wing-btn-text') }, '+ 放大')
+        ]),
+        h('div', { staticStyle: S('game-zoom-wing-badge') }, [
+          h('text', { staticStyle: S('game-zoom-wing-badge-text') }, z.label)
+        ]),
+        h('div', { staticStyle: S('game-zoom-wing-btn'), on: { click: function () { vm.zoomOutGameImg(); } } }, [
+          h('text', { staticStyle: S('game-zoom-wing-btn-text') }, '- 缩小')
+        ]),
+        h('div', { staticStyle: S('game-zoom-wing-btn'), on: { click: function () { vm.resetGameZoom(); } } }, [
+          h('text', { staticStyle: S('game-zoom-wing-btn-text') }, '重置')
+        ])
+      ])
+    ]));
+  }
+
   // 分支选择弹层
   if (vm.activeChoice && vm.activeChoice.options) {
     var optionButtons = vm.activeChoice.options.map(function (opt) {
@@ -1178,7 +1264,7 @@ export function renderGame(vm, h) {
         h('text', { staticStyle: S('game-normal-end-sub') }, '本线已通关，相关结局与素材已解锁'),
         h('div', {
           staticStyle: S('game-normal-end-btn'),
-          on: { click: function () { vm.view = 'title'; } }
+          on: { click: function () { vm.exitToTitle(); } }
         }, [
           h('text', { staticStyle: S('game-normal-end-btn-text') }, '返回标题')
         ])
@@ -1213,7 +1299,7 @@ export function renderGame(vm, h) {
             menuBtn('历史对话', 'BACKLOG', function () { vm.openBacklog(); })
           ]),
           h('div', { staticStyle: S('game-menu-row') }, [
-            menuBtn('返回标题', 'TITLE', function () { vm.closeModal(); vm.view = 'title'; }),
+            menuBtn('返回标题', 'TITLE', function () { vm.exitToTitle(); }),
             menuBtn('继续游玩', 'RESUME', function () { vm.closeModal(); })
           ]),
           h('text', { staticStyle: S('game-menu-notice') }, vm.menuNotice || '轻触操作继续剧情')

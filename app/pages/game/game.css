@@ -1387,6 +1387,85 @@
   justify-content: space-around;
 }
 .game-choice-option {
+  height: 30px;
+  margin-bottom: 1px;
+}
+
+/* 固定视口三栏：用绝对定位锁定 390 + 322 + 88，避免 padding/border 把 800px 撑出屏幕。 */
+.game-root {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  width: 800px;
+  height: 220px;
+  overflow: hidden;
+}
+.game-main-layout {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  width: 800px;
+  height: 220px;
+}
+.game-stage-pane {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 390px;
+  height: 220px;
+  border-right-width: 0;
+}
+.game-dialog-pane {
+  position: absolute;
+  left: 390px;
+  top: 0;
+  width: 322px;
+  height: 220px;
+  padding-top: 0;
+  padding-right: 0;
+  padding-bottom: 0;
+  padding-left: 0;
+}
+.game-dialog-header {
+  position: absolute;
+  left: 10px;
+  top: 8px;
+  width: 302px;
   height: 28px;
-  margin-bottom: 3px;
+  padding-bottom: 0;
+}
+.game-dialog-body {
+  position: absolute;
+  left: 10px;
+  top: 42px;
+  width: 300px;
+  height: 140px;
+  padding-top: 0;
+  padding-bottom: 0;
+  overflow: hidden;
+}
+.game-dialog-text {
+  width: 300px;
+  font-size: 20px;
+  line-height: 27px;
+}
+.game-dialog-footer {
+  position: absolute;
+  left: 10px;
+  top: 190px;
+  width: 302px;
+  height: 24px;
+  padding-top: 0;
+}
+.game-ctrl-pane {
+  position: absolute;
+  left: 712px;
+  top: 0;
+  width: 88px;
+  height: 220px;
+  padding-top: 8px;
+  padding-right: 0;
+  padding-bottom: 8px;
+  padding-left: 0;
+  align-items: center;
 }
