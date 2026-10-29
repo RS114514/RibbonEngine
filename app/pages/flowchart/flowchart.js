@@ -206,13 +206,11 @@ export var flowchartMethods = {
   },
 
   currentChapterNodes: function () {
-    var chapters = fcChapters(this.flowRoute);
-    if (!chapters.length) return [];
-    var ch = chapters[this.flowChapterIndex] || chapters[0];
+    // 整条路线一起展示：章节只作为节点标签，不能再把一章切成一个孤岛。
     var out = [];
     for (var i = 0; i < FC_DISPLAY_NODES.length; i++) {
       var n = FC_DISPLAY_NODES[i];
-      if (n.route === this.flowRoute && n.chapter === ch) out.push(n);
+      if (n.route === this.flowRoute) out.push(n);
     }
     return out;
   },
@@ -315,13 +313,11 @@ export var flowchartMethods = {
 };
 
 export function renderFlowchart(vm, h) {
-  var chapters = fcChapters(vm.flowRoute);
-  var curChapter = chapters[vm.flowChapterIndex] || chapters[0] || 'CHAPTER --';
   var nodes = vm.currentChapterNodes();
   var layout = fcLayout(nodes);
 
   var emaList = FC_EMA[vm.flowRoute] || [];
-  var emaIdx = vm.flowChapterIndex % Math.max(1, emaList.length);
+  var emaIdx = 0;
   var emaArt = emaList.length ? coverUrl('ema/ema_' + emaList[emaIdx] + '.jpg') : titleBgUrl();
 
   var routeTabs = FC_ROUTES.map(function (r) {
@@ -333,15 +329,6 @@ export function renderFlowchart(vm, h) {
     }, [
       h('text', { staticStyle: S('fc-route-tab-text') }, r)
     ]);
-  });
-
-  var chapterIndicator = chapters.map(function (ch, idx) {
-    var active = idx === vm.flowChapterIndex;
-    return h('div', {
-      key: ch + '_' + idx,
-      staticStyle: active ? S('fc-dot fc-dot-active') : S('fc-dot'),
-      on: { click: function () { vm.flowChapterIndex = idx; vm.updateFlowPanMax(); } }
-    });
   });
 
   var edges = layout.edges.map(function (ed) {
@@ -401,21 +388,8 @@ export function renderFlowchart(vm, h) {
         h('text', { staticStyle: S('fc-back-btn-text') }, '‹ 返回主菜单')
       ]),
       h('div', { staticStyle: S('fc-nav-row') }, [
-        h('div', {
-          staticStyle: S('fc-page-btn'),
-          on: { click: function () { vm.prevChapter(); } }
-        }, [
-          h('text', { staticStyle: S('fc-page-btn-text') }, '‹ 上一章')
-        ]),
-        h('text', { staticStyle: S('fc-chapter-title') }, curChapter),
-        h('div', {
-          staticStyle: S('fc-page-btn'),
-          on: { click: function () { vm.nextChapter(); } }
-        }, [
-          h('text', { staticStyle: S('fc-page-btn-text') }, '下一章 ›')
-        ])
-      ]),
-      h('div', { staticStyle: S('fc-dots-row') }, chapterIndicator)
+        h('text', { staticStyle: S('fc-chapter-title') }, vm.flowRoute + '线 · ' + nodes.length + ' 个节点')
+      ])
     ]),
 
     h('div', { staticStyle: S('fc-body') }, [

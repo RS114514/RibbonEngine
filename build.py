@@ -173,26 +173,90 @@ def px(v):
     return float(m.group(1)) if m else None
 
 
+def _expand_declaration(path, name, value):
+    """把浏览器常见的复合属性展开成 Falcon 支持的长属性。
+
+    Falcon 的样式解析器只稳定支持 border-*-width/style/color、padding-*、
+    margin-* 等长属性。AI 生成的移植代码经常写 border/padding 简写，
+    以前它们会被静默忽略，最终界面缺边框、文字贴边，但测试仍然全绿。
+    """
+    def bad():
+        raise ValueError("%s: 无法展开复合属性 %s: %r" % (path, name, value))
+
+    def sides(prefix, values):
+        parts = values.split()
+        if not 1 <= len(parts) <= 4:
+            bad()
+        top = parts[0]
+        right = parts[1] if len(parts) > 1 else top
+        bottom = parts[2] if len(parts) > 2 else top
+        left = parts[3] if len(parts) > 3 else right
+        return [
+            (prefix + "Top", top),
+            (prefix + "Right", right),
+            (prefix + "Bottom", bottom),
+            (prefix + "Left", left),
+        ]
+
+    if name in ("padding", "margin"):
+        return sides(name, value)
+    if name in ("border", "border-top", "border-right", "border-bottom", "border-left"):
+        parts = value.split(None, 2)
+        if len(parts) == 1:
+            return [(name + "-width" if name != "border" else "border-width", parts[0])]
+        if len(parts) < 3:
+            bad()
+        width, style, color = parts
+        if name == "border":
+            return [("border-width", width), ("border-style", style), ("border-color", color)]
+        suffix = name[len("border-"):].capitalize()
+        return [
+            ("border" + suffix + "Width", width),
+            ("border" + suffix + "Style", style),
+            ("border" + suffix + "Color", color),
+        ]
+    if name in ("background", "font", "flex"):
+        bad()
+    return [(name, value)]
+
+
+def _camel(name):
+    return re.sub(r"-([a-z])", lambda m: m.group(1).upper(), name)
+
+
 def css_to_obj(path):
     with open(path, encoding="utf-8") as f:
         txt = re.sub(r"/\*.*?\*/", "", f.read(), flags=re.S)
     rules = {}
-    for sel_group, body in re.findall(r"([^{}]+)\{([^}]*)\}", txt):
+    cursor = 0
+    rule_re = re.compile(r"\s*([^{}]+?)\s*\{([^{}]*)\}")
+    while txt[cursor:].strip():
+        match = rule_re.match(txt, cursor)
+        if not match:
+            raise ValueError("%s: 非法 CSS 规则或未闭合括号（偏移 %d）" % (path, cursor))
+        sel_group, body = match.groups()
         obj = {}
         for decl in body.split(";"):
-            if ":" not in decl:
+            if not decl.strip():
                 continue
-            k, v = decl.split(":", 1)
-            k = re.sub(r"-([a-z])", lambda m: m.group(1).upper(), k.strip())
-            v = v.strip().replace(", ", ",")
-            obj[k] = int(v) if re.fullmatch(r"\d+", v) else v
+            if ":" not in decl:
+                raise ValueError("%s: 非法 CSS 声明 %r" % (path, decl))
+            raw_name, raw_value = decl.split(":", 1)
+            name = raw_name.strip()
+            value = raw_value.strip().replace(", ", ",")
+            if not name or not value:
+                raise ValueError("%s: CSS 属性或值为空" % path)
+            for expanded_name, expanded_value in _expand_declaration(path, name, value):
+                key = _camel(expanded_name)
+                obj[key] = int(expanded_value) if re.fullmatch(r"\d+", expanded_value) else expanded_value
         # 逗号分隔的选择器组：每个 class 各得一份样式；
-        # 复合/后代选择器落到最末 class（修饰态），运行时由 S() 按 class 顺序叠加。
+        # 复合选择器落到最末 class（修饰态），运行时由 S() 按 class 顺序叠加。
         for sel in sel_group.split(","):
             parts = sel.split()
             if not parts or any(not re.fullmatch(r"(?:\.[A-Za-z0-9_-]+)+", p) for p in parts):
-                continue
-            rules[re.findall(r"\.([A-Za-z0-9_-]+)", parts[-1])[-1]] = obj
+                raise ValueError("%s: 不支持的 CSS 选择器 %r（只允许简单 class / 复合 class）" % (path, sel.strip()))
+            rules.setdefault(re.findall(r"\.([A-Za-z0-9_-]+)", parts[-1])[-1], {}).update(obj)
+        cursor = match.end()
     return rules
 
 

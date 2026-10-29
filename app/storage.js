@@ -42,6 +42,28 @@ export function getNowDateStr() {
          (h < 10 ? '0' + h : '' + h) + ':' + (min < 10 ? '0' + min : '' + min);
 }
 
+// 旧版本/旧 AI 生成的存档字段兼容：读取时补齐，不静默丢选择状态。
+export function normalizeSaves(parsed) {
+  var saves = parsed || {};
+  for (var key in saves) {
+    if (!/^slot\d+$/.test(key) || !saves[key] || typeof saves[key] !== 'object') continue;
+    var item = saves[key];
+    var extra = item.extra || {};
+    item.time = item.time || item.date || '';
+    item.chapter = item.chapter || '--';
+    item.speaker = item.speaker || '';
+    item.text = item.text || extra.text || '';
+    item.bg = item.bg || '';
+    item.cg = item.cg || '';
+    item.sd = item.sd || '';
+    item.extra = {
+      choices: extra.choices || item.choiceSelections || {},
+      flags: extra.flags || item.choiceFlags || {}
+    };
+  }
+  return saves;
+}
+
 // 读取全部存档
 export function readAllSaves(gameId) {
   var gid = gameId || _activeGameId;
@@ -52,14 +74,14 @@ export function readAllSaves(gameId) {
       var newPath = getSaveFilePath(gid);
       var txt = G.readText(newPath);
       if (txt) {
-        var parsed = JSON.parse(txt);
+        var parsed = normalizeSaves(JSON.parse(txt));
         _savesCache[gid] = parsed;
         return parsed;
       }
       // 2. 尝试通用备用平铺路径
       var flatTxt = G.readText('/userdisk/gal_data/' + gid + '_saves.json');
       if (flatTxt) {
-        var flatParsed = JSON.parse(flatTxt);
+        var flatParsed = normalizeSaves(JSON.parse(flatTxt));
         _savesCache[gid] = flatParsed;
         return flatParsed;
       }
