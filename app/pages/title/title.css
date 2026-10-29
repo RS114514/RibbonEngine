@@ -815,7 +815,7 @@
   margin-top: 6px;
 }
 
-.title-exit-actions {
+.title-exit-actions { display: flex;
   justify-content: space-between;
 }
 

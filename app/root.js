@@ -11,8 +11,9 @@ var methods = {
     log('root onShow, view=' + this.view);
     if (this.view === 'title' && typeof this.initTitle === 'function') {
       this.initTitle();
-    } else if (this.view === 'game' && typeof this.initGame === 'function') {
-      this.initGame();
+    } else if (this.view === 'game' && !this.currentScenarioData && typeof this.initGame === 'function') {
+      // 恢复页面时不要用无参 initGame 把当前行号重置为 0。
+      this.initGame(this.currentScenario, this.currentLine);
     } else if (this.view === 'flowchart' && typeof this.initFlowchart === 'function') {
       this.initFlowchart();
     } else if (this.view === 'afterstory' && typeof this.initAfterStory === 'function') {
@@ -20,12 +21,20 @@ var methods = {
     }
   },
   onHide: function () {
+    this.autoPlay = false;
+    this.skipMode = false;
+    this.clearAutoTimer();
+    this.currentBgm = '';
     var G = getGal();
     if (G) {
       G.stopVoice();
+      G.stopBgm();
     }
   },
   onUnload: function () {
+    this.autoPlay = false;
+    this.skipMode = false;
+    this.clearAutoTimer();
     var G = getGal();
     if (G) {
       G.stopVoice();
@@ -73,6 +82,7 @@ export default {
       historyFocusIndex: 0,
       modalType: '', // '' | 'save' | 'load' | 'menu' | 'history'
       modalSaves: {},
+      saveNotice: '',
       historyList: [],
       historyScrollY: 0,
       historyMaxScroll: 0,

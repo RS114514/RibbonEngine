@@ -164,6 +164,7 @@ def normalize_row(raw, index: int, default_chapter: str, where: str, warnings: l
         chapter = default_chapter or "--"
     if not isinstance(chapter, str):
         fail("%s 第 %d 行 chapter 必须是字符串" % (where, index + 1))
+    chapter = re.sub(r"^chapter[\s\u3000]*", "", chapter, flags=re.I).strip() or (default_chapter or "--")
     cg = normalize_asset(raw[8], "%s 第 %d 行 cg" % (where, index + 1),
                          IMAGE_EXTS, allow_subpath=True) if len(raw) > 8 else None
     sd = normalize_asset(raw[9], "%s 第 %d 行 sd" % (where, index + 1),

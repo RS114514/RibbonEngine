@@ -11,6 +11,8 @@ function dataUrl(source) {
 const commonStub = `
 export function S(names, extra) { return Object.assign({ classes: names }, extra || {}); }
 export function log() {}
+export function getBacklog() { return []; }
+export function resolveSlotThumbnail() { return ''; }
 export function getChapterByLine() { return '--'; }
 export function formatChapter(value) { var text = String(value || '').replace(/^chapter[\s\u3000]*/i, '').replace(/\s+/g, ' ').trim(); return text || '--'; }
 export function getGal() { return globalThis.__renderGal; }
@@ -90,7 +92,7 @@ async function loadPage(path, replacements) {
 }
 
 const commonReplacement = [
-  [/import \{[^}]+\} from '\.\.\/\.\.\/common\.js';/, `import { S, getGal, log, getChapterByLine, formatChapter } from '${dataUrl(commonStub)}';`]
+  [/import \{[^}]+\} from '\.\.\/\.\.\/common\.js';/, `import { S, getGal, log, getChapterByLine, formatChapter, getBacklog, resolveSlotThumbnail } from '${dataUrl(commonStub)}';`]
 ];
 
 const game = await loadPage('app/pages/game/game.js', [
@@ -160,6 +162,27 @@ test('game renders data-driven line, sprite, background and voice', () => {
   assert.match(body, /1 \/ 2/);
   assert.ok(calls.some((call) => call[0] === 'playVoice' && call[1].endsWith('/voice_1.ogg')));
   assert.ok(calls.some((call) => call[0] === 'stopBgm'));
+});
+
+test('game renders usable history and save/load overlays instead of blank modals', () => {
+  makeGal();
+  const vm = Object.assign(Object.create(game.gameMethods), { view: 'game' });
+  vm.initGame('main', 0);
+  vm.historyList = [{ speaker: 'A', text: 'visited line' }];
+  vm.modalType = 'history';
+  assert.match(text(game.renderGame(vm, h)), /visited line/);
+  vm.modalType = 'menu';
+  assert.match(text(game.renderGame(vm, h)), /保存进度/);
+  vm.modalType = 'save';
+  vm.modalSaves = {};
+  vm.savePage = 0;
+  vm.selectedSlot = 1;
+  vm.saveNotice = '';
+  const saveText = text(game.renderGame(vm, h));
+  assert.match(saveText, /DATA SAVE/);
+  assert.match(saveText, /s0001-01/);
+  vm.modalType = 'load';
+  assert.match(text(game.renderGame(vm, h)), /DATA LOAD/);
 });
 
 test('afterstory renders cards and starts the generated scenario', () => {
