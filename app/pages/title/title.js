@@ -492,7 +492,7 @@ export function renderTitle(vm, h) {
               h('div', { staticStyle: S('saveload-slot-body') }, [
                 bgPath ? h('image', {
                   staticStyle: S('saveload-slot-body-img'),
-                  attrs: { src: bgPath }
+                  attrs: { src: bgPath, resize: 'contain' }
                 }) : h('text', { staticStyle: S('saveload-slot-noimage') }, 'NO IMAGE')
               ]),
               h('div', { staticStyle: S('saveload-slot-footer') }, [
@@ -552,7 +552,7 @@ export function renderTitle(vm, h) {
               h('div', { staticStyle: S('saveload-preview-box') }, [
                 selBg ? h('image', {
                   staticStyle: S('saveload-preview-img'),
-                  attrs: { src: selBg }
+                  attrs: { src: selBg, resize: 'contain' }
                 }) : h('text', { staticStyle: S('saveload-preview-noimage') }, 'NO IMAGE')
               ]),
               h('div', { staticStyle: S('saveload-info-card') }, [

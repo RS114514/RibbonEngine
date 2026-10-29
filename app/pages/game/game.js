@@ -189,6 +189,7 @@ export var gameMethods = {
 
   clearTransientFx: function () {
     this.fxWhite = 0;
+    this.fxBlack = 0;
     this.fxShakeX = 0;
     this.fxShakeY = 0;
     this.fxOverlaySrc = '';
@@ -331,14 +332,6 @@ export var gameMethods = {
         var path = this.fxOverlayPath(e[1]);
         if (path) overlays.push(path);
       }
-    }
-
-    if (row && isBlackBg(row[4]) && (!row.length || !row[8])) {
-      lastBlack = 1;
-      anim.black = 1;
-    } else if (lastBlack > 0) {
-      lastBlack = 0;
-      anim.black = 0;
     }
 
     if (white) {
@@ -869,6 +862,53 @@ export function renderGame(vm, h) {
     }));
   }
 
+  var blackOpacity = Number(vm.fxBlack) || 0;
+  if (blackOpacity < 0) blackOpacity = 0;
+  if (blackOpacity > 1) blackOpacity = 1;
+  if (blackOpacity > 0.01) {
+    stageChildren.push(h('div', {
+      staticStyle: S('game-stage-fx-black', {
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        width: 390,
+        height: 220,
+        backgroundColor: '#000000',
+        opacity: blackOpacity
+      })
+    }));
+  }
+
+  var whiteOpacity = Number(vm.fxWhite) || 0;
+  if (whiteOpacity < 0) whiteOpacity = 0;
+  if (whiteOpacity > 1) whiteOpacity = 1;
+  if (whiteOpacity > 0.01) {
+    stageChildren.push(h('div', {
+      staticStyle: S('game-stage-fx-white', {
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        width: 390,
+        height: 220,
+        backgroundColor: '#ffffff',
+        opacity: whiteOpacity
+      })
+    }));
+  }
+
+  if (vm.fxOverlaySrc) {
+    stageChildren.push(h('image', {
+      attrs: { src: vm.fxOverlaySrc, resize: 'contain' },
+      staticStyle: S('game-fx-overlay', {
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        width: 390,
+        height: 220
+      })
+    }));
+  }
+
   var stagePane = h('div', {
     staticStyle: S('game-stage-pane'),
     on: {
@@ -945,46 +985,6 @@ export function renderGame(vm, h) {
   }, [stagePane, dialoguePane, quickBar]);
 
   var rootChildren = [mainView];
-
-  // FX 层
-  if (vm.fxBlack > 0.01) {
-    rootChildren.push(h('div', {
-      staticStyle: S('game-fx-black', {
-        position: 'absolute',
-        left: 0,
-        top: 0,
-        width: 800,
-        height: 220,
-        backgroundColor: '#000000',
-        opacity: vm.fxBlack
-      })
-    }));
-  }
-  if (vm.fxWhite > 0.01) {
-    rootChildren.push(h('div', {
-      staticStyle: S('game-fx-white', {
-        position: 'absolute',
-        left: 0,
-        top: 0,
-        width: 800,
-        height: 220,
-        backgroundColor: '#ffffff',
-        opacity: vm.fxWhite
-      })
-    }));
-  }
-  if (vm.fxOverlaySrc) {
-    rootChildren.push(h('image', {
-      attrs: { src: vm.fxOverlaySrc, resize: 'contain' },
-      staticStyle: S('game-fx-overlay', {
-        position: 'absolute',
-        left: 0,
-        top: 0,
-        width: 800,
-        height: 220
-      })
-    }));
-  }
 
   // 分支选择弹层
   if (vm.activeChoice && vm.activeChoice.options) {
