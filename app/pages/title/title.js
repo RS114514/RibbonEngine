@@ -208,6 +208,10 @@ export var titleMethods = {
     this.titleModalType = 'settings';
     this.titleConfirmModal = null;
   },
+  openTitleAboutModal: function () {
+    this.titleModalType = 'about';
+    this.titleConfirmModal = null;
+  },
   toggleTitleBgm: function () {
     var G = getGal();
     this.bgmOn = !this.bgmOn;
@@ -414,10 +418,55 @@ export function renderTitle(vm, h) {
                 h('text', { staticStyle: S('title-system-btn-text') }, '清除所有数据')
               ]),
               h('div', {
+                staticStyle: S('title-system-btn title-system-about-btn'),
+                on: { click: function () { vm.openTitleAboutModal(); } }
+              }, [
+                h('text', { staticStyle: S('title-system-btn-text') }, '关于')
+              ]),
+              h('div', {
                 staticStyle: S('title-system-btn title-system-close'),
                 on: { click: function () { vm.closeTitleModal(); } }
               }, [
                 h('text', { staticStyle: S('title-system-btn-text') }, '退出设置')
+              ])
+            ])
+          ])
+        ])
+      );
+    } else if (vm.titleModalType === 'about') {
+      children.push(
+        h('div', { staticStyle: S('title-system-mask') }, [
+          h('div', { staticStyle: S('title-system-box title-about-box') }, [
+            h('div', { staticStyle: S('title-system-header') }, [
+              h('text', { staticStyle: S('title-system-title') }, '❖ 关于与鸣谢 ABOUT ❖'),
+              h('text', { staticStyle: S('title-system-subtitle') }, 'RibbonEngine 通用 GalGame 引擎')
+            ]),
+            h('div', { staticStyle: S('title-about-content') }, [
+              h('div', { staticStyle: S('title-about-row') }, [
+                h('text', { staticStyle: S('title-about-label') }, '作者哔哩哔哩'),
+                h('text', { staticStyle: S('title-about-val') }, 'RS_TV')
+              ]),
+              h('div', { staticStyle: S('title-about-row') }, [
+                h('text', { staticStyle: S('title-about-label') }, '游戏移植仓库'),
+                h('text', { staticStyle: S('title-about-val') }, 'github.com/RS114514/senren-banka-ydpen-port')
+              ]),
+              h('div', { staticStyle: S('title-about-row') }, [
+                h('text', { staticStyle: S('title-about-label') }, '游戏引擎仓库'),
+                h('text', { staticStyle: S('title-about-val') }, 'github.com/RS114514/RibbonEngine')
+              ])
+            ]),
+            h('div', { staticStyle: S('title-system-footer title-about-actions') }, [
+              h('div', {
+                staticStyle: S('title-system-btn title-about-back-btn'),
+                on: { click: function () { vm.openTitleSettings(); } }
+              }, [
+                h('text', { staticStyle: S('title-system-btn-text') }, '返回设置')
+              ]),
+              h('div', {
+                staticStyle: S('title-system-btn title-system-close'),
+                on: { click: function () { vm.closeTitleModal(); } }
+              }, [
+                h('text', { staticStyle: S('title-system-btn-text') }, '关闭')
               ])
             ])
           ])

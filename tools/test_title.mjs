@@ -327,3 +327,32 @@ test('settings and exit overlays preserve the 800x220 touch-friendly layout', as
   assert.ok(action, 'settings action style must exist');
   assert.ok(parseFloat(action[1].match(/height:\s*([\d.]+)px/)[1]) >= 30);
 });
+
+test('ABOUT modal exposes author Bilibili, game port repo, and engine repo', () => {
+  const { vm } = makeVm();
+  vm.openTitleSettings();
+  const settingsModal = renderTitle(vm, h);
+  const aboutBtn = findButton(settingsModal, '关于');
+  assert.ok(aboutBtn, 'Settings modal must contain ABOUT button');
+  aboutBtn.data.on.click();
+  assert.equal(vm.titleModalType, 'about');
+
+  const aboutModal = renderTitle(vm, h);
+  const aboutText = textContent(aboutModal);
+  assert.match(aboutText, /RS_TV/);
+  assert.match(aboutText, /senren-banka-ydpen-port/);
+  assert.match(aboutText, /RibbonEngine/);
+
+  // 点击返回设置
+  const backBtn = findButton(aboutModal, '返回设置');
+  assert.ok(backBtn, 'About modal must have return-to-settings button');
+  backBtn.data.on.click();
+  assert.equal(vm.titleModalType, 'settings');
+
+  // 再次打开关于，测试关闭按钮
+  vm.openTitleAboutModal();
+  const closeBtn = findButton(renderTitle(vm, h), '关闭');
+  assert.ok(closeBtn, 'About modal must have close button');
+  closeBtn.data.on.click();
+  assert.equal(vm.titleModalType, '');
+});

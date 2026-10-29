@@ -866,3 +866,72 @@
 .saveload-bottom-bar { position: absolute; left: 10px; top: 198px; width: 780px; height: 20px; display: flex; align-items: center; justify-content: center; }
 .saveload-bottom-tip { font-size: 10px; color: #d2aec7; }
 
+.title-system-clear-btn {
+  min-width: 116px;
+  height: 36px;
+  background-color: #7b1c28;
+  border-color: #e57373;
+}
+
+.title-system-about-btn {
+  min-width: 96px;
+  height: 36px;
+  background-color: #481a2c;
+  border-width: 1px;
+  border-color: #d4a366;
+}
+
+.title-about-box {
+  width: 520px;
+  height: 188px;
+}
+
+.title-about-content {
+  height: 84px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.title-about-row {
+  height: 25px;
+  padding-left: 10px;
+  padding-right: 10px;
+  background-color: rgba(36, 17, 28, 0.88);
+  border-width: 1px;
+  border-color: #532c3f;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title-about-label {
+  font-size: 11px;
+  font-weight: bold;
+  color: #f4e4d3;
+}
+
+.title-about-val {
+  font-size: 10px;
+  font-weight: bold;
+  color: #f7d9ae;
+}
+
+.title-about-actions {
+  justify-content: space-between;
+}
+
+.title-about-back-btn {
+  min-width: 116px;
+  height: 36px;
+  background-color: #7d1c31;
+  border-color: #e0b477;
+}
+
+.confirm-btn-danger {
+  background-color: #8c1d33;
+  border-color: #f48fb1;
+}
+
