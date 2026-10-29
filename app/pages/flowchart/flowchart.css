@@ -16,7 +16,7 @@
   height: 220px;
   opacity: 0.12;
 }
-.fc-header {
+.fc-header { display: flex;
   position: absolute;
   top: 0;
   left: 0;
@@ -40,7 +40,7 @@
   font-size: 12px;
   text-align: center;
 }
-.fc-back {
+.fc-back { display: flex;
   width: 76px;
   height: 24px;
   justify-content: center;
@@ -69,7 +69,7 @@
   top: 0;
   height: 32px;
 }
-.fc-progress {
+.fc-progress { display: flex;
   position: absolute;
   top: 3px;
   width: 56px;
@@ -91,10 +91,10 @@
 }
 .fc-viewport {
   position: absolute;
-  top: 60px;
+  top: 0;
   left: 0;
   width: 688px;
-  height: 128px;
+  height: 154px;
   overflow: hidden;
   background-color: rgba(17, 19, 26, 0.94);
 }
@@ -160,7 +160,7 @@
   border-color: #ffdc7c;
   background-color: #fff7db;
 }
-.fc-node-top {
+.fc-node-top { display: flex;
   height: 14px;
   flex-direction: row;
   justify-content: space-between;
@@ -181,7 +181,7 @@
   font-size: 11px;
   font-weight: bold;
 }
-.fc-toolbar {
+.fc-toolbar { display: flex;
   position: absolute;
   top: 188px;
   left: 0;
@@ -192,7 +192,7 @@
   background-color: #27232b;
   border-top: 1px solid #6b5a60;
 }
-.fc-chapter-button {
+.fc-chapter-button { display: flex;
   width: 62px;
   height: 26px;
   margin-left: 5px;
@@ -214,7 +214,7 @@
   color: #f4dfc6;
   font-size: 10px;
 }
-.fc-pan-button {
+.fc-pan-button { display: flex;
   width: 29px;
   height: 26px;
   margin-left: 3px;
@@ -229,7 +229,7 @@
   font-size: 15px;
   font-weight: bold;
 }
-.fc-reset {
+.fc-reset { display: flex;
   width: 45px;
   height: 26px;
   margin-left: 4px;
@@ -243,7 +243,7 @@
   color: #ffffff;
   font-size: 11px;
 }
-.fc-sidebar {
+.fc-sidebar { display: flex;
   position: absolute;
   top: 28px;
   left: 696px;
@@ -253,12 +253,12 @@
   background-color: #211b23;
   border-left: 1px solid #7f6268;
 }
-.fc-route-list {
+.fc-route-list { display: flex;
   width: 104px;
   height: 150px;
   align-items: center;
 }
-.fc-route {
+.fc-route { display: flex;
   width: 96px;
   height: 23px;
   margin-top: 2px;
@@ -277,7 +277,7 @@
   font-size: 12px;
   font-weight: bold;
 }
-.fc-route-art {
+.fc-route-art { display: flex;
   width: 104px;
   height: 34px;
   flex-direction: row;
@@ -296,4 +296,147 @@
   color: #ffe3bd;
   font-size: 11px;
   text-align: center;
+}
+
+/* Engine UI contract: route-level classes used by the current flowchart.js. */
+.fc-back-btn {
+  position: absolute;
+  left: 8px;
+  top: 3px;
+  width: 82px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #7d1c31;
+  border-radius: 3px;
+}
+.fc-back-btn-text {
+  font-size: 11px;
+  font-weight: bold;
+  color: #ffffff;
+}
+.fc-nav-row {
+  position: absolute;
+  left: 96px;
+  top: 4px;
+  width: 500px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fc-chapter-title {
+  width: 500px;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  color: #ffe3bd;
+}
+.fc-routes-col {
+  position: absolute;
+  left: 688px;
+  top: 34px;
+  width: 112px;
+  height: 154px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #170916;
+}
+.fc-route-tab {
+  width: 100px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #2d1326;
+  border-radius: 3px;
+}
+.fc-route-tab-active {
+  background-color: #8c1e33;
+}
+.fc-route-tab-text {
+  font-size: 10px;
+  font-weight: bold;
+  color: #ffffff;
+}
+.fc-body {
+  position: absolute;
+  left: 0;
+  top: 34px;
+  width: 688px;
+  height: 154px;
+  display: flex;
+  flex-direction: row;
+}
+.fc-footer {
+  position: absolute;
+  left: 0;
+  top: 188px;
+  width: 800px;
+  height: 32px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #1a0b18;
+}
+.fc-footer-notice {
+  width: 560px;
+  height: 22px;
+  font-size: 10px;
+  color: #eedcc9;
+  margin-left: 12px;
+}
+.fc-jump-btn {
+  width: 110px;
+  height: 24px;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #8c1e33;
+  border-radius: 3px;
+}
+.fc-jump-btn-text {
+  font-size: 10px;
+  font-weight: bold;
+  color: #ffffff;
+}
+.fc-card {
+  position: absolute;
+  width: 148px;
+  height: 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 6px;
+  padding-right: 6px;
+  background-color: #241122;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #6b3554;
+  border-radius: 4px;
+}
+.fc-card-active {
+  border-color: #ffd700;
+  background-color: #4c1833;
+}
+.fc-card-title {
+  width: 136px;
+  height: 18px;
+  font-size: 10px;
+  font-weight: bold;
+  color: #ffffff;
+}
+.fc-card-sub {
+  width: 136px;
+  height: 14px;
+  font-size: 9px;
+  color: #bfa1b3;
+}
+.fc-card-disabled {
+  opacity: 0.55;
 }

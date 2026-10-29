@@ -428,10 +428,10 @@
 
 /* 系统菜单面板中的大按钮（4个并排：历史对话、保存、读取、返回） */
 .game-menu-grid {
-  width: 586px;
+  width: 590px;
   height: 144px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-between;
   align-items: center;
 }
@@ -1300,3 +1300,93 @@
   z-index: 30;
 }
 
+
+/* Engine UI contract: classes used by the current game.js, kept in longhand. */
+.game-main-layout {
+  width: 800px;
+  height: 220px;
+  display: flex;
+  flex-direction: row;
+}
+.game-menu-notice {
+  height: 18px;
+  font-size: 11px;
+  color: #ecc598;
+}
+
+/* Remaining game.js UI classes (aligned with the renderer). */
+.game-menu-row {
+  width: 590px;
+  height: 54px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.game-normal-end {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 800px;
+  height: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  background-color: #241025;
+  z-index: 400;
+}
+.game-normal-end-title {
+  font-size: 30px;
+  font-weight: bold;
+  color: #f8d6b1;
+}
+.game-normal-end-sub {
+  width: 740px;
+  font-size: 13px;
+  text-align: center;
+  color: #f6ddea;
+}
+.game-normal-end-btn {
+  width: 248px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #783052;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #d4a2bc;
+  border-radius: 4px;
+}
+.game-normal-end-btn-text {
+  font-size: 13px;
+  color: #fff4e5;
+}
+
+/* Menu grid: two rows of three 188x52 actions; do not inherit the old 136x94 card. */
+.game-menu-action-btn {
+  width: 188px;
+  height: 52px;
+}
+.game-menu-grid {
+  width: 586px;
+  height: 140px;
+}
+.game-menu-row {
+  width: 586px;
+  height: 52px;
+}
+.game-choice-panel {
+  height: 196px;
+}
+.game-choice-prompt {
+  height: 30px;
+}
+.game-choice-options {
+  height: 124px;
+  justify-content: space-around;
+}
+.game-choice-option {
+  height: 28px;
+  margin-bottom: 3px;
+}

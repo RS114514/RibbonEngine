@@ -15,6 +15,8 @@ export function S(names, extra) {
   return Object.assign({ testClasses: names }, extra || {});
 }
 export function log() {}
+export function getBacklog() { return []; }
+export function resolveSlotThumbnail() { return ''; }
 export function getChapterByLine() { return '1-1'; }
 export function formatChapter(value) { var text = String(value || '').replace(/^chapter[\s\u3000]*/i, '').replace(/\s+/g, ' ').trim(); return text || '--'; }
 export function getGal() { return globalThis.__audioTestGal; }
@@ -83,7 +85,7 @@ const galleryStub = dataUrl('export var GALLERY = ' + JSON.stringify({
 let gameSource = await readFile(GAME_URL, 'utf8');
 gameSource = gameSource.replace(
   /import \{[^}]+\} from '\.\.\/\.\.\/common\.js';/,
-  `import { S, getGal, log, getChapterByLine, formatChapter } from '${dataUrl(commonStub)}';`
+  `import { S, getGal, log, getChapterByLine, formatChapter, getBacklog, resolveSlotThumbnail } from '${dataUrl(commonStub)}';`
 );
 gameSource = gameSource.replace(
   /import \{[^']*?\} from '\.\.\/\.\.\/storage\.js';/,

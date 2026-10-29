@@ -160,6 +160,28 @@ class CssParsingTests(unittest.TestCase):
             finally:
                 globals_["APP_DIR"] = old_app_dir
 
+    def test_build_styles_rejects_js_class_without_css(self):
+        ns = self.ns
+        with tempfile.TemporaryDirectory() as tmp:
+            app = Path(tmp) / "app"
+            stage = Path(tmp) / "stage"
+            stage.mkdir()
+            for page in STYLE_PAGES:
+                (app / "pages" / page).mkdir(parents=True, exist_ok=True)
+                (app / "pages" / page / f"{page}.css").write_text(".present { color: #fff; }\n", encoding="utf-8")
+            (app / "pages" / "game" / "game.js").write_text("const x = S('missing-class');\n", encoding="utf-8")
+            globals_ = ns["build_styles"].__globals__
+            old_app_dir = globals_["APP_DIR"]
+            globals_["APP_DIR"] = str(app)
+            try:
+                out = io.StringIO()
+                with contextlib.redirect_stdout(out), self.assertRaises(SystemExit):
+                    ns["build_styles"](str(stage))
+                self.assertIn("missing-class", out.getvalue())
+                self.assertFalse((stage / "Styles.js").exists())
+            finally:
+                globals_["APP_DIR"] = old_app_dir
+
     def test_real_css_parses_combo_and_compound_selectors(self):
         ns = self.ns
         with tempfile.TemporaryDirectory() as tmp:

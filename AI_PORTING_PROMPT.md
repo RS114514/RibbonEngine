@@ -54,6 +54,21 @@
 - `app/pages/afterstory/`：后日谈/短篇。
 - `app/data/`：由用户的转换器生成，不要手写游戏剧情。
 
+### 2.1 游玩 UI 的硬契约（不要另起一套类名）
+
+引擎的 JS 只通过 `S('class-name')` 取样式；类名必须和合并后的 CSS 对齐。旧提示词曾让 AI 修改 `.game-textbox`、`.game-action-btn` 等并不存在的类，结果文字框和按钮完全没有样式——这是“UI 全错”的典型原因。
+
+游玩页应优先保留以下实际结构（可按游戏换配色，但不要改行为骨架）：
+
+- 三栏：`.game-stage-pane`（390×220）+ `.game-dialog-pane`（322×220）+ `.game-ctrl-pane`（88×220）。
+- 文本：`.game-dialog-header` / `.game-speaker-badge` / `.game-dialog-body` / `.game-dialog-text` / `.game-dialog-footer`。
+- 快捷栏：只有 4 个核心按钮，使用 `.game-ctrl-btn`；更多动作放进菜单，不要塞成 8 个挤爆 220px。
+- 弹层：`.game-modal-mask` + `.game-modal-card`；选择支用 `.game-choice-panel` / `.game-choice-options` / `.game-choice-option`；历史用 `.game-history-*`；存读档用 `.saveload-*`。
+- 所有可点击 `<div>` 必须有非空文字、明确的 `on.click` 真实方法；不能出现空按钮、只有图标没有语义、或点击后什么都不发生的按钮。
+- 任何 flex 布局都要显式 `display: flex`；任何新增类必须在对应页面 CSS 中存在。
+
+`python3 build.py --check` 现在会扫描 JS 中的静态 `S('...')` 类名，CSS 缺失会直接失败；不要用给类名加引号/动态字符串绕过检查。
+
 ## 3. 数据契约（以实际引擎代码为准）
 
 ### 3.1 `story_data.js`

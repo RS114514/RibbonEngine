@@ -279,19 +279,50 @@ def check_bounds(name, r):
     return ["  .%s: %s" % (name, e) for e in errs]
 
 
+def check_ui_classes(styles):
+    """确保 JS 里 S('...') 使用的静态类名真的在合并后的 CSS 中存在。
+
+    这是引擎最容易出现的“能启动但所有按钮无样式”问题：JS 用
+    game-dialogue-pane，CSS 却只有 game-dialog-pane。没有这个检查，
+    AI 移植后单测可能全绿，真机 UI 仍然完全错位。
+    """
+    missing = []
+    for page in STYLE_PAGES:
+        js = os.path.join(APP_DIR, "pages", page, "%s.js" % page)
+        if not os.path.isfile(js):
+            continue
+        with open(js, encoding="utf-8") as source:
+            text = source.read()
+        for match in re.finditer(r"S\('([^']+)'", text):
+            for cls in match.group(1).split():
+                if cls not in styles:
+                    missing.append("%s.js: .%s" % (page, cls))
+    if missing:
+        print("[x] JS/CSS 类名契约失败（按钮/文本会无样式）:")
+        for item in missing[:40]:
+            print("    " + item)
+        if len(missing) > 40:
+            print("    ... 以及另外 %d 个" % (len(missing) - 40))
+        sys.exit(1)
+
+
 def build_styles(out_dir):
     styles, errs = {}, []
     for page in STYLE_PAGES:
         css = os.path.join(APP_DIR, "pages", page, "%s.css" % page)
         if not os.path.isfile(css):
             die("缺少样式文件: %s" % css)
-        rules = css_to_obj(css)
+        try:
+            rules = css_to_obj(css)
+        except ValueError as exc:
+            die(str(exc))
         for n, r in rules.items():
             errs += check_bounds(n, r)
         styles.update(rules)
     if errs:
         print("[x] CSS 尺寸越界:\n" + "\n".join(errs))
         sys.exit(1)
+    check_ui_classes(styles)
     src = "// 由 build.py 从 CSS 生成，勿手改\nvar ST = %s;\nexport default ST;\n" % json.dumps(
         styles, ensure_ascii=False, indent=1)
     with open(os.path.join(out_dir, "Styles.js"), "w", encoding="utf-8", newline="\n") as f:

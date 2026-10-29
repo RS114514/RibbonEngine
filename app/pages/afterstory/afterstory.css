@@ -28,7 +28,7 @@
   background-color: rgba(12, 13, 20, 0.3);
 }
 
-.as-header {
+.as-header { display: flex;
   position: absolute;
   top: 0;
   left: 0;
@@ -43,7 +43,7 @@
   padding-right: 14px;
 }
 
-.as-title-box {
+.as-title-box { display: flex;
   flex-direction: row;
   align-items: center;
 }
@@ -60,7 +60,7 @@
   margin-left: 10px;
 }
 
-.as-btn-back {
+.as-btn-back { display: flex;
   background-color: rgba(185, 28, 28, 0.9);
   border: 1px solid rgba(252, 165, 165, 0.6);
   border-radius: 3px;
@@ -86,7 +86,7 @@
   overflow: hidden;
 }
 
-.as-card-list {
+.as-card-list { display: flex;
   position: absolute;
   top: 0;
   left: 0;
@@ -134,7 +134,7 @@
   opacity: 1;
 }
 
-.as-card-chapter-badge {
+.as-card-chapter-badge { display: flex;
   position: absolute;
   top: 5px;
   right: 5px;
@@ -156,7 +156,7 @@
 }
 
 /* 图片区下方约 79 高的信息区，文字不再压住绘马 */
-.as-card-info {
+.as-card-info { display: flex;
   position: absolute;
   top: 101px;
   left: 0;
@@ -183,7 +183,7 @@
   margin-right: 8px;
 }
 
-.as-card-bottom-actions {
+.as-card-bottom-actions { display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -191,7 +191,7 @@
   margin-right: 8px;
 }
 
-.as-btn-voice {
+.as-btn-voice { display: flex;
   width: 56px;
   height: 28px;
   background-color: rgba(244, 114, 182, 0.9);
@@ -206,7 +206,7 @@
   font-weight: bold;
 }
 
-.as-btn-play {
+.as-btn-play { display: flex;
   width: 100px;
   height: 28px;
   background-color: rgba(16, 185, 129, 0.9);

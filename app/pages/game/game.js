@@ -1,5 +1,5 @@
 // pages/game/game.js —— 超宽带鱼屏 390+322+88 分栏视觉小说主引擎
-import { S, getGal, log, getChapterByLine, formatChapter } from '../../common.js';
+import { S, getGal, log, getChapterByLine, formatChapter, getBacklog, resolveSlotThumbnail } from '../../common.js';
 import {
   readAllSaves,
   writeAllSaves,
@@ -733,6 +733,8 @@ export var gameMethods = {
 
   openBacklog: function () {
     this.modalType = 'history';
+    this.historyList = getBacklog();
+    this.historyFocusIndex = Math.max(0, this.historyList.length - 1);
   },
 
   openSaveModal: function () {
@@ -752,6 +754,61 @@ export var gameMethods = {
   closeModal: function () {
     this.modalType = '';
     this.confirmModal = null;
+  },
+
+  changeSavePage: function (delta) {
+    var next = (this.savePage || 0) + delta;
+    if (next < 0) next = 0;
+    if (next > 4) next = 4;
+    this.savePage = next;
+    this.selectedSlot = next * 6 + 1;
+  },
+
+  selectSlotItem: function (slotNum) {
+    this.selectedSlot = slotNum;
+    if (this.modalType === 'save') {
+      this.executeSave(slotNum);
+    } else if (this.modalType === 'load') {
+      this.executeLoad(slotNum);
+    }
+  },
+
+  executeSave: function (slotNum) {
+    var rows = this.currentScenarioData || SCENARIOS[this.currentScenario || 'main'] || [];
+    var row = rows[this.currentLine] || [];
+    var record = {
+      scenario: this.currentScenario || 'main',
+      line: this.currentLine,
+      chapter: formatChapter(row[7]),
+      speaker: row[1] || '',
+      text: row[2] || '',
+      bg: row[4] || '',
+      cg: row.length > 8 ? (row[8] || '') : '',
+      sd: row.length > 9 ? (row[9] || '') : '',
+      bgm: row[5] || '',
+      character: row[6] || null,
+      extra: {
+        choices: Object.assign({}, this.choiceSelections || {}),
+        flags: Object.assign({}, this.choiceFlags || {})
+      }
+    };
+    saveSlotRecord(slotNum, record);
+    this.selectedSlot = slotNum;
+    this.modalSaves = readAllSaves() || {};
+    this.saveNotice = '已保存到槽位 ' + slotNum;
+  },
+
+  executeLoad: function (slotNum) {
+    var record = loadSlotRecord(slotNum);
+    if (!record) {
+      this.saveNotice = '槽位 ' + slotNum + ' 为空';
+      return;
+    }
+    var extra = record.extra || {};
+    this.choiceSelections = Object.assign({}, extra.choices || {});
+    this.choiceFlags = Object.assign({}, extra.flags || {});
+    this.modalType = '';
+    this.initGame(record.scenario || 'main', record.line || 0);
   },
 
   toggleZoom: function () {
@@ -813,7 +870,7 @@ export function renderGame(vm, h) {
   var stageChildren = [];
   if (bgSrc) {
     stageChildren.push(h('image', {
-      staticStyle: S('game-bg-img', {
+      staticStyle: S('game-stage-img', {
         position: 'absolute',
         left: (vm.gameImgPanX || 0) + 'px',
         top: (vm.gameImgPanY || 0) + 'px',
@@ -825,7 +882,7 @@ export function renderGame(vm, h) {
   }
   if (cgSrc) {
     stageChildren.push(h('image', {
-      staticStyle: S('game-cg-img', {
+      staticStyle: S('game-stage-img', {
         position: 'absolute',
         left: 0,
         top: 0,
@@ -836,7 +893,7 @@ export function renderGame(vm, h) {
     }));
   } else if (sdSrc) {
     stageChildren.push(h('image', {
-      staticStyle: S('game-sd-img', {
+      staticStyle: S('game-stage-img', {
         position: 'absolute',
         left: 0,
         top: 0,
@@ -847,7 +904,7 @@ export function renderGame(vm, h) {
     }));
   } else if (fgSrc) {
     stageChildren.push(h('image', {
-      staticStyle: S('game-fg-img', {
+      staticStyle: S('game-stage-char', {
         position: 'absolute',
         left: (vm.gameImgPanX || 0) + 'px',
         top: (vm.gameImgPanY || 0) + 'px',
@@ -917,55 +974,51 @@ export function renderGame(vm, h) {
 
   // 2. 中间对话区 (322x220)
   var dialoguePane = h('div', {
-    staticStyle: S('game-dialogue-pane'),
+    staticStyle: S('game-dialog-pane'),
     on: { click: function () { vm.nextLine(); } }
   }, [
-    speaker ? h('div', { staticStyle: S('game-speaker-tag') }, [
-      h('text', { staticStyle: S('game-speaker-text') }, speaker)
+    speaker ? h('div', { staticStyle: S('game-speaker-badge') }, [
+      h('text', { staticStyle: S('game-speaker-name') }, speaker)
     ]) : null,
-    h('div', { staticStyle: S('game-text-box') }, [
-      h('text', { staticStyle: S('game-text-content') }, text)
+    h('div', { staticStyle: S('game-dialog-body') }, [
+      h('text', { staticStyle: S('game-dialog-text') }, text)
     ]),
-    h('div', { staticStyle: S('game-footer-info') }, [
-      h('text', { staticStyle: S('game-chapter-label') }, chapter),
-      h('text', { staticStyle: S('game-progress-label') }, (vm.currentLine + 1) + ' / ' + totalLines)
+    h('div', { staticStyle: S('game-dialog-footer') }, [
+      h('text', { staticStyle: S('game-sub-chapter-text') }, chapter),
+      h('text', { staticStyle: S('game-dialog-progress') }, (vm.currentLine + 1) + ' / ' + totalLines)
     ])
   ]);
 
-  // 3. 右侧快捷操作栏 (88x220)
-  var quickBar = h('div', { staticStyle: S('game-quick-bar') }, [
+  // 3. 右侧快捷操作栏 (88x220)：只保留四个核心操作，避免 8 个按钮挤爆
+  var quickBar = h('div', { staticStyle: S('game-ctrl-pane') }, [
     h('div', {
-      staticStyle: S('game-btn'),
-      on: { click: function () { vm.prevLine(); } }
-    }, [h('text', { staticStyle: S('game-btn-text') }, '上句')]),
+      staticStyle: S('game-ctrl-btn'),
+      on: { click: function () { vm.replayVoice(); } }
+    }, [
+      h('text', { staticStyle: S('game-ctrl-btn-title') }, '重听'),
+      h('text', { staticStyle: S('game-ctrl-btn-sub') }, 'VOICE')
+    ]),
     h('div', {
-      staticStyle: S('game-btn'),
-      on: { click: function () { vm.jumpToNextChoice(); } }
-    }, [h('text', { staticStyle: S('game-btn-text') }, '下选')]),
-    h('div', {
-      staticStyle: vm.autoPlay ? S('game-btn game-btn-active') : S('game-btn'),
+      staticStyle: vm.autoPlay ? S('game-ctrl-btn game-ctrl-btn-active') : S('game-ctrl-btn'),
       on: { click: function () { vm.toggleAutoPlay(); } }
-    }, [h('text', { staticStyle: S('game-btn-text') }, '自动')]),
+    }, [
+      h('text', { staticStyle: S('game-ctrl-btn-title') }, vm.autoPlay ? '停止' : '自动'),
+      h('text', { staticStyle: vm.autoPlay ? S('game-ctrl-btn-sub-active') : S('game-ctrl-btn-sub') }, 'AUTO')
+    ]),
     h('div', {
-      staticStyle: vm.skipMode ? S('game-btn game-btn-active') : S('game-btn'),
+      staticStyle: vm.skipMode ? S('game-ctrl-btn game-ctrl-btn-active') : S('game-ctrl-btn'),
       on: { click: function () { vm.toggleSkipMode(); } }
-    }, [h('text', { staticStyle: S('game-btn-text') }, '快进')]),
+    }, [
+      h('text', { staticStyle: S('game-ctrl-btn-title') }, vm.skipMode ? '停止' : '快进'),
+      h('text', { staticStyle: vm.skipMode ? S('game-ctrl-btn-sub-active') : S('game-ctrl-btn-sub') }, 'SKIP')
+    ]),
     h('div', {
-      staticStyle: S('game-btn'),
-      on: { click: function () { vm.openBacklog(); } }
-    }, [h('text', { staticStyle: S('game-btn-text') }, '回溯')]),
-    h('div', {
-      staticStyle: S('game-btn'),
-      on: { click: function () { vm.openSaveModal(); } }
-    }, [h('text', { staticStyle: S('game-btn-text') }, '保存')]),
-    h('div', {
-      staticStyle: S('game-btn'),
-      on: { click: function () { vm.openLoadModal(); } }
-    }, [h('text', { staticStyle: S('game-btn-text') }, '读取')]),
-    h('div', {
-      staticStyle: S('game-btn'),
+      staticStyle: S('game-ctrl-btn'),
       on: { click: function () { vm.openMenuModal(); } }
-    }, [h('text', { staticStyle: S('game-btn-text') }, '菜单')])
+    }, [
+      h('text', { staticStyle: S('game-ctrl-btn-title') }, '菜单'),
+      h('text', { staticStyle: S('game-ctrl-btn-sub') }, 'MENU')
+    ])
   ]);
 
   var mainView = h('div', {
@@ -982,55 +1035,189 @@ export function renderGame(vm, h) {
 
   var rootChildren = [mainView];
 
+  // 历史对话（Backlog）
+  if (vm.modalType === 'history') {
+    var history = vm.historyList || [];
+    var start = Math.max(0, history.length - 3);
+    var end = Math.max(0, history.length - 1);
+    var historyItems = [];
+    for (var hi = start; hi <= end; hi++) {
+      (function (item, idx) {
+        if (!item) return;
+        historyItems.push(h('div', { key: 'history_' + idx, staticStyle: S('game-history-item' + (idx === end ? ' game-history-item-latest' : '')) }, [
+          h('div', { staticStyle: S('game-history-main') }, [
+            h('div', { staticStyle: S('game-history-item-head') }, [
+              h('text', { staticStyle: S('game-history-speaker') }, item.speaker || '【独白】'),
+              h('text', { staticStyle: S('game-history-line-num') }, '#' + (idx + 1))
+            ]),
+            h('text', { staticStyle: S('game-history-text') }, item.text || '')
+          ])
+        ]));
+      })(history[hi], hi);
+    }
+    rootChildren.push(h('div', { staticStyle: S('game-modal-mask') }, [
+      h('div', { staticStyle: S('game-history-card') }, [
+        h('div', { staticStyle: S('game-history-header') }, [
+          h('text', { staticStyle: S('game-history-title') }, '历史对话 BACKLOG'),
+          h('div', { staticStyle: S('game-modal-close-btn'), on: { click: function () { vm.closeModal(); } } }, [
+            h('text', { staticStyle: S('game-modal-close-text') }, '关闭')
+          ])
+        ]),
+        h('div', { staticStyle: S('game-history-viewport') }, [
+          h('div', { staticStyle: S('game-history-list') }, historyItems.length ? historyItems : [
+            h('text', { staticStyle: S('game-history-tip') }, '还没有可回顾的台词')
+          ])
+        ]),
+        h('div', { staticStyle: S('game-history-footer') }, [
+          h('text', { staticStyle: S('game-history-tip') }, '轻触关闭返回剧情')
+        ])
+      ])
+    ]));
+  }
+
+  // 存档 / 读档
+  if (vm.modalType === 'save' || vm.modalType === 'load') {
+    var isSave = vm.modalType === 'save';
+    var page = vm.savePage || 0;
+    var pageStr = '00' + (page + 1) + ' / 0005';
+    var saves = vm.modalSaves || {};
+    var selSlot = vm.selectedSlot || (page * 6 + 1);
+    var selItem = saves['slot' + selSlot];
+    var selBg = resolveSlotThumbnail(selItem);
+    var selDate = selItem && selItem.time ? selItem.time : '——';
+    var selChapter = formatChapter(selItem && selItem.chapter);
+    var selComment = selItem ? (selItem.speaker ? '【' + selItem.speaker + '】' : '') + (selItem.text || '') : 'NO DATA';
+    var slotCards = [];
+    var startNum = page * 6 + 1;
+    for (var si = 0; si < 6; si++) {
+      (function (slotNum) {
+        var item = saves['slot' + slotNum];
+        var code = 's000' + (page + 1) + '-' + (slotNum < 10 ? '0' + slotNum : '' + slotNum);
+        var thumb = resolveSlotThumbnail(item);
+        var desc = item ? (item.speaker ? '【' + item.speaker + '】' : '') + (item.text || '') : 'NO DATA';
+        var cardClass = 'saveload-slot-card' + (selSlot === slotNum ? ' saveload-slot-card-active' : '') + (item ? ' saveload-slot-card-hasdata' : '');
+        slotCards.push(h('div', { key: 'slot' + slotNum, staticStyle: S(cardClass), on: { click: function () { vm.selectSlotItem(slotNum); } } }, [
+          h('div', { staticStyle: S('saveload-slot-header') }, [
+            h('text', { staticStyle: S('saveload-slot-code') }, code),
+            h('text', { staticStyle: S('saveload-slot-time') }, item && item.time ? item.time : '')
+          ]),
+          h('div', { staticStyle: S('saveload-slot-body') }, [
+            thumb ? h('image', { staticStyle: S('saveload-slot-body-img'), attrs: { src: thumb, resize: 'contain' } }) : h('text', { staticStyle: S('saveload-slot-noimage') }, 'NO IMAGE')
+          ]),
+          h('div', { staticStyle: S('saveload-slot-footer') }, [
+            h('text', { staticStyle: S('saveload-slot-desc') }, desc.substring(0, 16))
+          ])
+        ]));
+      })(startNum + si);
+    }
+    rootChildren.push(h('div', { staticStyle: S('saveload-root') }, [
+      h('div', { staticStyle: S('saveload-header') }, [
+        h('div', { staticStyle: S('saveload-title-box') }, [
+          h('text', { staticStyle: S('saveload-title-text') }, isSave ? 'DATA SAVE' : 'DATA LOAD')
+        ]),
+        h('div', { staticStyle: S('saveload-header-right') }, [
+          h('div', { staticStyle: S('saveload-mode-tabs') }, [
+            h('div', { staticStyle: S('saveload-mode-tab saveload-mode-tab-active') }, [
+              h('div', { staticStyle: S('saveload-mode-dot') }),
+              h('text', { staticStyle: S('saveload-mode-text-active') }, isSave ? '保存物语' : '读取物语')
+            ])
+          ]),
+          h('div', { staticStyle: S('saveload-pager') }, [
+            h('div', { staticStyle: S('saveload-pager-btn'), on: { click: function () { vm.changeSavePage(-1); } } }, [h('text', { staticStyle: S('saveload-pager-btn-text') }, '‹')]),
+            h('text', { staticStyle: S('saveload-pager-text') }, pageStr),
+            h('div', { staticStyle: S('saveload-pager-btn'), on: { click: function () { vm.changeSavePage(1); } } }, [h('text', { staticStyle: S('saveload-pager-btn-text') }, '›')])
+          ]),
+          h('div', { staticStyle: S('saveload-header-close-btn'), on: { click: function () { vm.closeModal(); } } }, [
+            h('text', { staticStyle: S('saveload-header-close-text') }, '返回游戏')
+          ])
+        ])
+      ]),
+      h('div', { staticStyle: S('saveload-body') }, [
+        h('div', { staticStyle: S('saveload-left-pane') }, [
+          h('div', { staticStyle: S('saveload-preview-box') }, [
+            selBg ? h('image', { staticStyle: S('saveload-preview-img'), attrs: { src: selBg, resize: 'contain' } }) : h('text', { staticStyle: S('saveload-preview-noimage') }, 'NO IMAGE')
+          ]),
+          h('div', { staticStyle: S('saveload-info-card') }, [
+            h('div', { staticStyle: S('saveload-info-row') }, [h('text', { staticStyle: S('saveload-info-label') }, 'DATE:'), h('text', { staticStyle: S('saveload-info-val') }, selDate)]),
+            h('div', { staticStyle: S('saveload-info-row') }, [h('text', { staticStyle: S('saveload-info-label') }, 'CHAPTER:'), h('text', { staticStyle: S('saveload-info-val') }, selChapter)]),
+            h('div', { staticStyle: S('saveload-info-row') }, [h('text', { staticStyle: S('saveload-info-label') }, 'COMMENT:'), h('text', { staticStyle: S('saveload-info-val') }, selComment.substring(0, 18))])
+          ])
+        ]),
+        h('div', { staticStyle: S('saveload-right-grid') }, slotCards)
+      ]),
+      h('div', { staticStyle: S('saveload-bottom-bar') }, [
+        h('text', { staticStyle: S('saveload-bottom-tip') }, vm.saveNotice || (isSave ? '轻触槽位保存当前进度' : '轻触有记录的槽位载入游戏'))
+      ])
+    ]));
+  }
+
   // 分支选择弹层
   if (vm.activeChoice && vm.activeChoice.options) {
     var optionButtons = vm.activeChoice.options.map(function (opt) {
       return h('div', {
         key: opt.index,
-        staticStyle: S('game-choice-btn'),
+        staticStyle: S('game-choice-option'),
         on: { click: function () { vm.handleChoiceSelect(vm.activeChoice, opt); } }
       }, [
-        h('text', { staticStyle: S('game-choice-btn-text') }, opt.text)
+        h('text', { staticStyle: S('game-choice-option-text') }, opt.text)
       ]);
     });
-    rootChildren.push(h('div', { staticStyle: S('game-modal-overlay') }, [
-      h('div', { staticStyle: S('game-choice-dialog') }, [
+    rootChildren.push(h('div', { staticStyle: S('game-modal-mask') }, [
+      h('div', { staticStyle: S('game-choice-panel') }, [
         h('text', { staticStyle: S('game-choice-prompt') }, vm.choiceNotice || '请选择分支'),
-        h('div', { staticStyle: S('game-choice-list') }, optionButtons)
+        h('div', { staticStyle: S('game-choice-options') }, optionButtons)
       ])
     ]));
   }
 
   // 结局展示弹层
   if (vm.normalEnd) {
-    rootChildren.push(h('div', { staticStyle: S('game-modal-overlay') }, [
-      h('div', { staticStyle: S('game-end-dialog') }, [
-        h('text', { staticStyle: S('game-end-title') }, 'NORMAL END'),
-        h('text', { staticStyle: S('game-end-sub') }, '本线已通关，相关结局与素材已解锁'),
+    rootChildren.push(h('div', { staticStyle: S('game-modal-mask') }, [
+      h('div', { staticStyle: S('game-normal-end') }, [
+        h('text', { staticStyle: S('game-normal-end-title') }, 'NORMAL END'),
+        h('text', { staticStyle: S('game-normal-end-sub') }, '本线已通关，相关结局与素材已解锁'),
         h('div', {
-          staticStyle: S('game-end-btn'),
+          staticStyle: S('game-normal-end-btn'),
           on: { click: function () { vm.view = 'title'; } }
         }, [
-          h('text', { staticStyle: S('game-end-btn-text') }, '返回标题')
+          h('text', { staticStyle: S('game-normal-end-btn-text') }, '返回标题')
         ])
       ])
     ]));
   }
 
-  // 菜单弹层
+  // 菜单弹层：复用引擎已有的 modal / menu-action 样式
   if (vm.modalType === 'menu') {
-    rootChildren.push(h('div', { staticStyle: S('game-modal-overlay') }, [
-      h('div', { staticStyle: S('game-menu-dialog') }, [
-        h('text', { staticStyle: S('game-menu-title') }, '快捷菜单'),
-        vm.menuNotice ? h('text', { staticStyle: S('game-menu-notice') }, vm.menuNotice) : null,
-        h('div', {
-          staticStyle: S('game-menu-item'),
-          on: { click: function () { vm.closeModal(); vm.view = 'title'; } }
-        }, [h('text', { staticStyle: S('game-menu-item-text') }, '返回主标题')]),
-        h('div', {
-          staticStyle: S('game-menu-item'),
-          on: { click: function () { vm.closeModal(); } }
-        }, [h('text', { staticStyle: S('game-menu-item-text') }, '继续游玩')])
+    function menuBtn(title, sub, action) {
+      return h('div', {
+        staticStyle: S('game-menu-action-btn'),
+        on: { click: action }
+      }, [
+        h('text', { staticStyle: S('game-menu-action-title') }, title),
+        h('text', { staticStyle: S('game-menu-action-sub') }, sub)
+      ]);
+    }
+    rootChildren.push(h('div', { staticStyle: S('game-modal-mask') }, [
+      h('div', { staticStyle: S('game-modal-card') }, [
+        h('div', { staticStyle: S('game-modal-header') }, [
+          h('text', { staticStyle: S('game-modal-title') }, '快捷菜单'),
+          h('div', {
+            staticStyle: S('game-modal-close-btn'),
+            on: { click: function () { vm.closeModal(); } }
+          }, [h('text', { staticStyle: S('game-modal-close-text') }, '关闭')])
+        ]),
+        h('div', { staticStyle: S('game-menu-grid') }, [
+          h('div', { staticStyle: S('game-menu-row') }, [
+            menuBtn('保存进度', 'SAVE', function () { vm.openSaveModal(); }),
+            menuBtn('读取进度', 'LOAD', function () { vm.openLoadModal(); }),
+            menuBtn('历史对话', 'BACKLOG', function () { vm.openBacklog(); })
+          ]),
+          h('div', { staticStyle: S('game-menu-row') }, [
+            menuBtn('返回标题', 'TITLE', function () { vm.closeModal(); vm.view = 'title'; }),
+            menuBtn('继续游玩', 'RESUME', function () { vm.closeModal(); })
+          ]),
+          h('text', { staticStyle: S('game-menu-notice') }, vm.menuNotice || '轻触操作继续剧情')
+        ])
       ])
     ]));
   }
